@@ -386,30 +386,31 @@ def timer(func, seconds):
 
 if __name__ == '__main__':
     # 执行收取水晶时间，单位为秒，默认为30秒。
-    # 每30分钟检测一次收取水晶
-    threading.Thread(target=timer, args=(collect_crystal, 60*30)).start()
+    # 每1811秒检测一次收取水晶
+    threading.Thread(target=timer, args=(collect_crystal, 1811)).start()
     # 执行自动提现时间，单位为秒，默认为60秒。
-    # 每60分钟检测一次自动提现
-    threading.Thread(target=timer, args=(drawcash_crystal, 60*60)).start()
+    # 每3631秒检测一次自动提现
+    threading.Thread(target=timer, args=(drawcash_crystal, 3631)).start()
     # 执行免费宝箱时间，单位为秒，默认为40秒。
-    # 每40分钟检测一次免费宝箱
-    threading.Thread(target=timer, args=(giftbox_crystal, 60*40)).start()
+    # 每1213秒检测一次免费宝箱
+    threading.Thread(target=timer, args=(giftbox_crystal, 1213)).start()
     # 执行秘银进攻时间，单位为秒，默认为480秒。
-    # 每480分钟检测一次秘银进攻
-    threading.Thread(target=timer, args=(searcht_crystal, 60*60*8)).start()
+    # 每28871秒检测一次秘银进攻
+    threading.Thread(target=timer, args=(searcht_crystal, 28871)).start()
     # 执行幸运转盘时间，单位为秒，默认为360秒。
-    # 每360分钟检测一次幸运转盘
-    threading.Thread(target=timer, args=(getaward_crystal, 60*60*6)).start()
+    # 每21613秒检测一次幸运转盘
+    threading.Thread(target=timer, args=(getaward_crystal, 21613)).start()
     # 刷新在线用户数据，单位为秒，默认为15秒。
-    # 每15秒刷新一次在线用户数据
-    threading.Thread(target=timer, args=(get_online_user_data, 15)).start()
+    # 每17秒刷新一次在线用户数据
+    threading.Thread(target=timer, args=(get_online_user_data, 17)).start()
     # 刷新离线用户数据，单位为秒，默认为60秒。
-    # 每10分钟刷新一次离线用户数据
-    threading.Thread(target=timer, args=(get_offline_user_data, 60*10)).start()
+    # 每617秒刷新一次离线用户数据
+    threading.Thread(target=timer, args=(get_offline_user_data, 617)).start()
     # 从在线用户列表中清除离线用户，单位为秒，默认为60秒。
     # 每分钟检测离线用户
-    threading.Thread(target=timer, args=(clear_offline_user, 60)).start()
+    threading.Thread(target=timer, args=(clear_offline_user, 59)).start()
     # 刷新选择自动任务的用户，单位为秒，默认为10分钟
-    threading.Thread(target=timer, args=(select_auto_task_user, 60*10)).start()
+	# 每617秒刷新选择自动任务的用户
+    threading.Thread(target=timer, args=(select_auto_task_user, 617)).start()
     while True:
         time.sleep(1)

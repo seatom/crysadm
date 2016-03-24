@@ -214,6 +214,7 @@
                                                             <input type="hidden" name="device_id" value="{{ dev.device_id }}" />
                                                             <input type="hidden" name="account_id" value="{{ dev.account_name }}" />
                                                             <input type="hidden" name="session_id" value="{{ row.session_id }}" />
+															<button type="submit" style="margin: 0px;" class="btn btn-info btn-xs" onclick="window.open('http://kj.xunlei.com/setting.html?user_id={{ row.user_id|e }}&session_id={{ row.session_id }}&device_id={{ dev.device_id }}');return false;">APP管理</button>
                                                             <button type="submit" style="margin: 0px;" class="btn btn-info btn-xs">管理</button>
                                                         </form>
                                                         {% endif %}
