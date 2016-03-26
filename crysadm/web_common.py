@@ -191,6 +191,34 @@ def dashboard_DoD_income():
     now = datetime.now()
     today_data = income_history.get(now.strftime('%Y-%m-%d'))
     yesterday_data = income_history.get((now + timedelta(days=-1)).strftime('%Y-%m-%d'))
+    #get today user_data
+    key = 'user_data:%s:%s' % (username, now.strftime('%Y-%m-%d'))
+    b_today_user_data = r_session.get(key)
+    b_today_user_data = json.loads(b_today_user_data.decode('utf-8'))
+    if b_today_user_data is None:
+        return Response(json.dumps(dict(data=[])), mimetype='application/json')
+
+    #get yesterday user_data
+    key = 'user_data:%s:%s' % (username, (now + timedelta(days=-1)).strftime('%Y-%m-%d'))
+    b_yesterday_user_data = r_session.get(key)
+    b_yesterday_user_data = json.loads(b_yesterday_user_data.decode('utf-8'))
+    if b_yesterday_user_data is None:
+        return Response(json.dumps(dict(data=[])), mimetype='application/json')
+
+    today_speed_series = dict(name='今日', data=[], type = 'spline', pointPadding=0.2, pointPlacement=0, color='#676A6C', tooltip=dict(valueSuffix=' kbps'))
+    yesterday_speed_series = dict(name='昨日', data=[], type = 'spline', pointPadding=-0.1, pointPlacement=0, color='#1AB394', tooltip=dict(valueSuffix=' kbps'))
+
+    today_speed_data = b_today_user_data.get('speed_stat')
+    yesterday_speed_data = b_yesterday_user_data.get('speed_stat')
+
+    for i in range(0, 24):
+        if yesterday_speed_data is not None:
+            yesterday_speed_series['data'].append(sum(row.get('dev_speed')[i] for row in yesterday_speed_data))
+        if i + now.hour < 24:
+            continue
+
+        if today_speed_data is not None:
+            today_speed_series['data'].append(sum(row.get('dev_speed')[i] for row in today_speed_data))
 
     yesterday_last_value = 0
     today_data_last_value = 0
@@ -236,7 +264,7 @@ def dashboard_DoD_income():
         expected_income = str(int((yesterday_last_value / dod_income_value) * now_income_value))
 
     dod_income_value += int((yesterday_series['data'][now.hour]) / 60 * now.minute)
-    return Response(json.dumps(dict(series=[yesterday_series, today_series],
+    return Response(json.dumps(dict(series=[yesterday_series, today_series, yesterday_speed_series, today_speed_series],
                                     data=dict(last_day_income=yesterday_last_value, dod_income_value=dod_income_value,
                                               expected_income=expected_income)
                                     )), mimetype='application/json')
