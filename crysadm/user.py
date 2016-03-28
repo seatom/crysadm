@@ -118,16 +118,38 @@ def user_change_property(field, value):
 
     user_info = json.loads(r_session.get(user_key).decode('utf-8'))
 
+    if field == 'auto_column':
+        user_info['auto_column'] = True if value == '1' else False
     if field == 'auto_collect':
         user_info['auto_collect'] = True if value == '1' else False
+        if not user_info.get('auto_collect_info'):
+            user_info['auto_collect_info'] = 10000
     if field == 'auto_drawcash':
         user_info['auto_drawcash'] = True if value == '1' else False
+        if not user_info.get('auto_drawcash_info'):
+            user_info['auto_drawcash_info'] = 10
     if field == 'auto_giftbox':
         user_info['auto_giftbox'] = True if value == '1' else False
     if field == 'auto_searcht':
         user_info['auto_searcht'] = True if value == '1' else False
     if field == 'auto_getaward':
         user_info['auto_getaward'] = True if value == '1' else False
+    if field == 'auto_collect_info':
+        n_password = request.values.get('new_password')
+        if not n_password:
+            n_password = 10000
+        if int(n_password) > 10000:
+            user_info['auto_collect_info'] = n_password
+        else:
+            user_info['auto_collect_info'] = 10000
+    if field == 'auto_drawcash_info':
+        n_password = request.values.get('new_password')
+        if not n_password:
+            n_password = 10
+        if int(n_password) > 10:
+            user_info['auto_drawcash_info'] = n_password
+        else:
+            user_info['auto_drawcash_info'] = 10
 
     r_session.set(user_key, json.dumps(user_info))
 

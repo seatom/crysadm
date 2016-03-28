@@ -43,11 +43,12 @@
                             <thead>
                             <tr>
                                 <th class="col-md-1">矿主ID</th>
-                                <th class="col-md-1">水晶数量</th>
-                                <th class="col-md-1 hidden-xs">秘银数量</th>
+                                <th class="col-md-1">水晶产量</th>
+                                <th class="col-md-1">秘银产量</th>
+                                <th class="col-md-1 hidden-xs">秘银存量</th>
                                 <th class="col-md-1 hidden-xs">宝箱</th>
                                 <th class="col-md-1 hidden-xs">未收取</th>
-                                <th class="col-md-1 hidden-xs">今日收益</th>
+                                <th class="col-md-1">今日收益</th>
                                 <th class="col-md-1">余额</th>
                                 <th class="col-md-1">总收入</th>
                                 <th class="col-md-2 col-xs-1">更新时间</th>
@@ -61,10 +62,11 @@
                                     <tr class="tooltip-demo">
                                         <td data-original-title="{% if row.session_id|length == 128 %}Advanced{% else %}Standard{% endif %}" data-toggle="tooltip" data-placement="top" >{{ row.data.privilege.mid |e }}</td>
                                         <td>{{ row.data.mine_info.dev_m.pdc |default('0') }}</td>
+                                        <td>{{ row.data.mine_info.td_s |default('0') }}</td>
                                         <td class="hidden-xs">{{ row.data.mine_info.s |e }}</td>
                                         <td class="hidden-xs">{{ row.data.mine_info.td_box_pdc |e }}</td>
                                         <td class="hidden-xs">{{ row.data.mine_info.td_not_in_a |e }}</td>
-                                        <td class="hidden-xs">{{ row.data.mine_info.dev_m.pdc + row.data.mine_info.td_box_pdc |default('0') }}</td>
+                                        <td>{{ row.data.mine_info.td_c |default('0') }}</td>
                                         <td>{{ convert_to_yuan(row.data.income.r_can_use | default(0)) |e }}</td>
                                         <td>{{ convert_to_yuan(row.data.income.r_h_a | default(0))| e }}</td>
                                         <td class="hidden-xs">{{ row.data.updated_time }}</td>
@@ -210,13 +212,12 @@
                                                     <td class="hidden-xs">{{ dev.ip | e }}</td>
                                                     <td>
                                                         {% if loop.first %}
-                                                        <form style="margin-left: 3px;float:right;" role="form" action="/admin_device" method="post">
-                                                            <input type="hidden" name="device_id" value="{{ dev.device_id }}" />
-                                                            <input type="hidden" name="account_id" value="{{ dev.account_name }}" />
-                                                            <input type="hidden" name="session_id" value="{{ row.session_id }}" />
-															<button type="submit" style="margin: 0px;" class="btn btn-info btn-xs" onclick="window.open('http://kj.xunlei.com/setting.html?user_id={{ row.user_id|e }}&session_id={{ row.session_id }}&device_id={{ dev.device_id }}');return false;">APP管理</button>
-                                                            <button type="submit" style="margin: 0px;" class="btn btn-info btn-xs">管理</button>
-                                                        </form>
+                                                            <form style="margin-left: 3px;float:right;" role="form" action="/admin_device" method="post">
+                                                                <input type="hidden" name="device_id" value="{{ dev.device_id }}" />
+                                                                <input type="hidden" name="account_id" value="{{ dev.account_name }}" />
+                                                                <input type="hidden" name="session_id" value="{{ row.session_id }}" />
+                                                                <button type="submit" style="margin: 0px;" class="btn btn-info btn-xs">管理</button>
+                                                            </form>
                                                         {% endif %}
                                                     </td>
                                                 </tr>

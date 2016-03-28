@@ -46,7 +46,9 @@ def old_login(username, md5_password):
     _chars = "0123456789ABCDEF"
 
     peer_id = ''.join(random.sample(_chars, 16))
+
     param = param % (hash_password, username, peer_id)
+
     headers = {'user-agent': "RedCrystal/1.5.0 (iPhone; iOS 8.4; Scale/2.00)"}
     r = requests.post("https://login.mobile.reg2t.sandai.net/", data=param, headers=headers, verify=False)
 

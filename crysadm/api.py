@@ -11,7 +11,7 @@ requests.packages.urllib3.disable_warnings()
 # 迅雷API接口
 appversion = '3.1.1'
 server_address = 'http://2-api-red.xunlei.com'
-agent_header = {'User-Agent': "RedCrystal/3.0.0 (iPhone; iOS 9.2; Scale/2.00)"}
+agent_header = {'user-agent': "RedCrystal/3.0.0 (iPhone; iOS 9.8; Scale/2.00)"}
 
 # 提交迅雷链接，返回信息
 def api_post(cookies, url, data, verify=False, headers=agent_header, timeout=60):
@@ -27,7 +27,7 @@ def api_post(cookies, url, data, verify=False, headers=agent_header, timeout=60)
     return json.loads(r.text)
 
 # 申请提现请求
-def exec_draw_cash(cookies, limits):
+def exec_draw_cash(cookies, limits=None):
     r = get_can_drawcash(cookies)
     if r.get('r') != 0:
         return r
@@ -83,10 +83,16 @@ def get_mine_info(cookies):
     body = dict(v='4', appversion=appversion)
     return api_post(url='/?r=mine/info', data=body, cookies=cookies)
 
+# 获取收益信息
+def get_produce_stat(cookies):
+    cookies['origin'] = '4' if len(cookies.get('sessionid')) == 128 else '1'
+    body = dict(appversion=appversion)
+    return api_post(url="/?r=mine/produce_stat", data=body, cookies=cookies)
+
 # 获取速度状态
-def get_speed_stat(s_type, cookies):
+def get_speed_stat(cookies):
     cookies['origin'] = '4' if len(cookies.get('sessionid')) == 128 else '2'
-    body = dict(type=s_type, hand='0', v='0', ver='1')
+    body = dict(type='1', hand='0', v='0', ver='1')
     try:
         r = requests.post(server_address + '/?r=mine/speed_stat', data=body, verify=False, cookies=cookies, headers=agent_header, timeout=60)
     except requests.exceptions.RequestException as e:
@@ -121,19 +127,19 @@ def collect(cookies):
 def api_giftbox(cookies):
     cookies['origin'] = '4' if len(cookies.get('sessionid')) == 128 else '2'
     body = dict(tp='0', p='0', ps='60', t='', v='2', cmid='-1')
-    return api_post(url='/?r=usr/giftbox', data=body, cookies=cookies).get('ci')
+    return api_post(url='/?r=usr/giftbox', data=body, cookies=cookies)
 
 # 提交打开宝箱请求
 def api_openStone(cookies, giftbox_id, direction):
     cookies['origin'] = '4' if len(cookies.get('sessionid')) == 128 else '1'
     body = dict(v='1', id=str(giftbox_id), side=direction)
-    return api_post(url='/?r=usr/openStone', data=body, cookies=cookies).get('get')
+    return api_post(url='/?r=usr/openStone', data=body, cookies=cookies)
 
 # 提交放弃宝箱请求
 def api_giveUpGift(cookies, giftbox_id):
     cookies['origin'] = '4' if len(cookies.get('sessionid')) == 128 else '1'
     body = dict(v='2', id=str(giftbox_id), tag='0')
-    return api_post(url='/?r=usr/giveUpGift', data=body, cookies=cookies).get('get')
+    return api_post(url='/?r=usr/giveUpGift', data=body, cookies=cookies)
 
 # 获取幸运转盘信息
 def api_getconfig(cookies):
@@ -148,19 +154,25 @@ def api_getaward(cookies):
     return api_post(url='/?r=turntable/getaward', data=body, cookies=cookies)
 
 # 获取秘银进攻信息
-def api_searcht_steal(cookies):
+def api_sys_getEntry(cookies):
+    cookies['origin'] = '4' if len(cookies.get('sessionid')) == 128 else '1'
+    body = dict(v='6')
+    return api_post(url='/?r=sys/getEntry', data=body, cookies=cookies)
+
+# 提交秘银进攻请求
+def api_steal_search(cookies):
     cookies['origin'] = '4' if len(cookies.get('sessionid')) == 128 else '1'
     body = dict(v='2')
     return api_post(url='/?r=steal/search', data=body, cookies=cookies)
-            
+
 # 提交收集秘银请求
-def api_searcht_collect(cookies, searcht_id):
+def api_steal_collect(cookies, searcht_id):
     cookies['origin'] = '4' if len(cookies.get('sessionid')) == 128 else '1'
     body = dict(sid=str(searcht_id), cmid='-2', v='2')
     return api_post(url='/?r=steal/collect', data=body, cookies=cookies)
 
-# 获取秘银进攻结果
-def api_summary_steal(cookies, searcht_id):
+# 提交进攻结果请求
+def api_steal_summary(cookies, searcht_id):
     cookies['origin'] = '4' if len(cookies.get('sessionid')) == 128 else '1'
     body = dict(v='2', sid=str(searcht_id))
     return api_post(url='/?r=steal/summary', data=body, cookies=cookies)
@@ -223,4 +235,4 @@ def __handle_exception(e=None, rd='接口故障', r=-12345):
 
     r_session.setex('api_error_count', str(err_count), err_count_ttl + 1)
     return dict(r=r, rd=rd)
-# @爱转角[2016-3-21]更新
+# @爱转角遇见了谁[2016-3-27]更新
