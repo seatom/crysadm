@@ -22,20 +22,22 @@
             <div class="ibox float-e-margins">
                 <div class="ibox-title" style="height:42px;">
                     今日统计
-                    {% if show_drawcash %}
-                        <form role="form" style="margin-left: 3px;float:right;" action="/drawcash/all" method="post">
-                            <button type="submit" style="margin: 0px;" onclick="javascript:return confirm('确认要所有账号提现?')" class="btn btn-info btn-xs">所有账号提现</button>
+                    {% if accounts|length >0 %}
+                        {% if show_drawcash %}
+                            <form role="form" style="margin-left: 3px;float:right;" action="/drawcash/all" method="post">
+                                <button type="submit" style="margin: 0px;" onclick="javascript:return confirm('确认要所有账号提现?')" class="btn btn-info btn-xs">所有账号提现</button>
+                            </form>
+                        {% endif %}
+                        <form role="form" style="margin-left: 3px;float:right;" action="/getaward/all" method="post">
+                            <button type="submit" style="margin: 0px;" onclick="javascript:return confirm('确认要所有账号转盘?')" class="btn btn-info btn-xs">所有账号转盘</button>
+                        </form>
+                        <form role="form" style="margin-left: 3px;float:right;" action="/searcht/all" method="post">
+                            <button type="submit" style="margin: 0px;" onclick="javascript:return confirm('确认要所有账号进攻?')" class="btn btn-info btn-xs">所有账号进攻</button>
+                        </form>
+                        <form role="form" style="margin-left: 3px;float:right;" action="/collect/all" method="post">
+                            <button type="submit" style="margin: 0px;" onclick="javascript:return confirm('确认要收取所有水晶?')" class="btn btn-info btn-xs">收取所有水晶</button>
                         </form>
                     {% endif %}
-                    <form role="form" style="margin-left: 3px;float:right;" action="/getaward/all" method="post">
-                        <button type="submit" style="margin: 0px;" onclick="javascript:return confirm('确认要所有账号转盘?')" class="btn btn-info btn-xs">所有账号转盘</button>
-                    </form>
-                    <form role="form" style="margin-left: 3px;float:right;" action="/searcht/all" method="post">
-                        <button type="submit" style="margin: 0px;" onclick="javascript:return confirm('确认要所有账号进攻?')" class="btn btn-info btn-xs">所有账号进攻</button>
-                    </form>
-                    <form role="form" style="margin-left: 3px;float:right;" action="/collect/all" method="post">
-                        <button type="submit" style="margin: 0px;" onclick="javascript:return confirm('确认要收取所有水晶?')" class="btn btn-info btn-xs">收取所有水晶</button>
-                    </form>
                 </div>
                 <div class="ibox-content">
                     <div class="table-responsive">
@@ -44,7 +46,7 @@
                             <tr>
                                 <th class="col-md-1">矿主ID</th>
                                 <th class="col-md-1">水晶产量</th>
-                                <th class="col-md-1">秘银产量</th>
+                                <th class="col-md-1 hidden-xs">秘银产量</th>
                                 <th class="col-md-1 hidden-xs">秘银存量</th>
                                 <th class="col-md-1 hidden-xs">宝箱</th>
                                 <th class="col-md-1 hidden-xs">未收取</th>
@@ -58,11 +60,10 @@
                             <tbody>
                             {% for row in accounts %}
                                 {% if row.data is defined and row.data.mine_info.r == 0 %}
-
                                     <tr class="tooltip-demo">
                                         <td data-original-title="{% if row.session_id|length == 128 %}Advanced{% else %}Standard{% endif %}" data-toggle="tooltip" data-placement="top" >{{ row.data.privilege.mid |e }}</td>
                                         <td>{{ row.data.mine_info.dev_m.pdc |default('0') }}</td>
-                                        <td>{{ row.data.mine_info.td_s |default('0') }}</td>
+                                        <td class="hidden-xs">{{ row.data.mine_info.td_s |e }}</td>
                                         <td class="hidden-xs">{{ row.data.mine_info.s |e }}</td>
                                         <td class="hidden-xs">{{ row.data.mine_info.td_box_pdc |e }}</td>
                                         <td class="hidden-xs">{{ row.data.mine_info.td_not_in_a |e }}</td>
@@ -106,7 +107,6 @@
                 </div>
                 <!-- /.panel-heading -->
                 <div class="ibox-content">
-
                     <div class="table-responsive">
                         <table class="table" name="miner_list">
                             <thead>
@@ -122,7 +122,7 @@
                                 <th class="col-md-1">状态</th>
                                 <th class="col-md-1 hidden-xs" style="min-width: 110px;">UPNP</th>
                                 <th class="col-md-1 hidden-xs">IP</th>
-                                <th class="col-md-1" style="text-align: right;">操作</th>
+                                <th class="col-md-1" style="text-align: right;min-width: 100px;" >操作</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -130,7 +130,7 @@
                                 {% if row.data is defined %}
                                     {% for dev in row.data.device_info%}
                                         {% if dev.dcdn_clients|length == 0 %}
-                                            <tr {% if loop.first %} style="background-color: #F9F9F9;"{% endif %}>
+                                            <tr {% if loop.first %} style="background-color: #F9F9F9;" {% endif %}>
                                                 <td >{{ dev.dcdn_id }}{{ dev.account_name }}{{ row.session_id }}</td>
                                                 <td >
                                                     {% if loop.first %}
@@ -173,7 +173,7 @@
                                             </tr>
                                         {% else %}
                                             {% for detail in dev.dcdn_clients %}
-                                                <tr {% if loop.first %} style="background-color: #F9F9F9;"{% endif %}>
+                                                <tr {% if loop.first %} style="background-color: #F9F9F9;" {% endif %}>
                                                     <td >{{ dev.dcdn_id }}{{ dev.account_name }}{{ row.session_id }}</td>
                                                     <td >
                                                         {% if loop.first %}
@@ -216,6 +216,7 @@
                                                                 <input type="hidden" name="device_id" value="{{ dev.device_id }}" />
                                                                 <input type="hidden" name="account_id" value="{{ dev.account_name }}" />
                                                                 <input type="hidden" name="session_id" value="{{ row.session_id }}" />
+																<button type="submit" style="margin: 0px;" class="btn btn-info btn-xs" onclick="window.open('http://kj.xunlei.com/setting.html?user_id={{ row.user_id|e }}&session_id={{ row.session_id }}&device_id={{ dev.device_id }}');return false;">APP</button>
                                                                 <button type="submit" style="margin: 0px;" class="btn btn-info btn-xs">管理</button>
                                                             </form>
                                                         {% endif %}

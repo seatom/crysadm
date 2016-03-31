@@ -90,17 +90,6 @@
                                 </span>
                             </div>
                         </form>
-                        {% if user.auto_collect  %}
-                        <form role="form" action="/admin/change_property/auto_collect_info/update/{{ user.username|e }}" method="post">
-                            <div class="form-group input-group">
-                                <span class="input-group-addon"><i style="width: 16px;" class="fa fa-wrench"></i></span>
-                                <input type="text" class="form-control" name="new_password" placeholder="输入收取触发值" value="{{ user.auto_collect_info }}">
-                                <span class="input-group-btn" style="padding-top: 0px;padding-bottom: 0px;">
-                                    <button type="submit" class="btn btn-success" style="text-align:left; width: 117px;">修改触发值</button>
-                                </span>
-                            </div>
-                        </form>
-                        {% endif %}
 
                         <form role="form" action="/admin/change_property/auto_drawcash/{% if user.auto_drawcash %}O{% else %}1{% endif %}/{{ user.username|e }}" method="post">
                             <div class="form-group input-group">
@@ -115,18 +104,6 @@
                                 </span>
                             </div>
                         </form>
-
-                        {% if user.auto_drawcash  %}
-                        <form role="form" action="/admin/change_property/auto_drawcash_info/update/{{ user.username|e }}" method="post">
-                            <div class="form-group input-group">
-                                <span class="input-group-addon"><i style="width: 16px;" class="fa fa-wrench"></i></span>
-                                <input type="text" class="form-control" name="new_password" placeholder="输入收取触发值" value="{{ user.auto_drawcash_info }}">
-                                <span class="input-group-btn" style="padding-top: 0px;padding-bottom: 0px;">
-                                    <button type="submit" class="btn btn-success" style="text-align:left; width: 117px;">修改触发值</button>
-                                </span>
-                            </div>
-                        </form>
-                        {% endif %}
 
                         <form role="form" action="/admin/change_property/auto_giftbox/{% if user.auto_giftbox %}O{% else %}1{% endif %}/{{ user.username|e }}" method="post">
                             <div class="form-group input-group">

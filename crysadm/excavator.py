@@ -7,6 +7,8 @@ import json
 import requests
 from urllib.parse import urlparse, parse_qs, unquote
 import time
+from datetime import datetime
+import re
 from api import ubus_cd, collect, exec_draw_cash, api_sys_getEntry, api_steal_search, api_steal_collect, api_steal_summary, api_getaward
 
 # 加载矿机主页面
@@ -43,6 +45,30 @@ def excavators():
     return render_template('excavators.html', err_msg=err_msg, info_msg=info_msg, accounts=accounts,
                            show_drawcash=show_drawcash)
 
+# 正则过滤+URL转码
+def regular_html(info):
+    regular = re.compile('<[^>]+>')
+    url = unquote(info)
+    return regular.sub("", url)
+
+# 手动日记记录
+def red_log(clas, type, id, gets):
+    user = session.get('user_info')
+    username = user.get('username')
+
+    if user.get('log_as_body') is None:
+        user['log_as_body'] = []
+
+    log_as_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    body = dict(time=log_as_time, clas=clas, type=type, id=id, gets=gets)
+
+    log_as_body = user.get('log_as_body')
+    log_as_body.append(body)
+
+    user['log_as_body'] = log_as_body
+
+    r_session.set('%s:%s' % ('user', username), json.dumps(user))
+
 # 收取水晶[id]
 @app.route('/collect/<user_id>', methods=['POST'])
 @requires_auth
@@ -58,9 +84,11 @@ def collect_id(user_id):
     r = collect(cookies)
     if r.get('rd') != 'ok':
         session['error_message'] = r.get('rd')
+        red_log('手动执行', '收取', user_id, r.get('rd'))
         return redirect(url_for('excavators'))
     else:
         session['info_message'] = '收取水晶成功.'
+        red_log('手动执行', '收取', user_id, '收取水晶成功.')
     account_data_key = account_key + ':data'
     account_data_value = json.loads(r_session.get(account_data_key).decode("utf-8"))
     account_data_value.get('mine_info')['td_not_in_a'] = 0
@@ -89,8 +117,10 @@ def collect_all():
         r = collect(cookies)
         if r.get('rd') != 'ok':
             error_message += 'Id:%s : %s<br />' % (user_id, r.get('rd'))
+            red_log('手动执行', '收取', user_id, r.get('rd'))
         else:
             success_message += 'Id:%s : 收取水晶成功.<br />' % user_id
+            red_log('手动执行', '收取', user_id, '收取水晶成功.')
             account_data_key = account_key + ':data'
             account_data_value = json.loads(r_session.get(account_data_key).decode("utf-8"))
             account_data_value.get('mine_info')['td_not_in_a'] = 0
@@ -119,9 +149,11 @@ def getaward_id(user_id):
     r = api_getaward(cookies)
     if r.get('rd') != 'ok':
         session['error_message'] = r.get('rd')
+        red_log('手动执行', '转盘', user_id, r.get('rd'))
         return redirect(url_for('excavators'))
     else:
-        session['info_message'] = '获得:%s  下次转需要:%s秘银.<br />' % (unquote(r.get('tip')), r.get('cost'))
+        session['info_message'] = '获得:%s  下次转需要:%s秘银.<br />' % (regular_html(r.get('tip')), r.get('cost'))
+        red_log('手动执行', '转盘', user_id, '获得:%s' % regular_html(r.get('tip')))
     account_data_key = account_key + ':data'
     account_data_value = json.loads(r_session.get(account_data_key).decode("utf-8"))
     account_data_value.get('mine_info')['td_not_in_a'] = 0
@@ -149,9 +181,11 @@ def getaward_all():
         cookies = dict(sessionid=session_id, userid=str(user_id))
         r = api_getaward(cookies)
         if r.get('rd') != 'ok':
-            error_message += 'Id:%s : %s<br />' % (user_id, r.get('rd')) 
+            error_message += 'Id:%s : %s<br />' % (user_id, r.get('rd'))
+            red_log('手动执行', '转盘', user_id, r.get('rd'))
         else:
-            success_message += 'Id:%s : 获得:%s  下次转需要:%s 秘银.<br />' % (user_id, unquote(r.get('tip')), r.get('cost'))
+            success_message += 'Id:%s : 获得:%s  下次转需要:%s 秘银.<br />' % (user_id, regular_html(r.get('tip')), r.get('cost'))
+            red_log('手动执行', '转盘', user_id, '获得:%s' % regular_html(r.get('tip')))
             account_data_key = account_key + ':data'
             account_data_value = json.loads(r_session.get(account_data_key).decode("utf-8"))
             account_data_value.get('mine_info')['td_not_in_a'] = 0
@@ -178,10 +212,12 @@ def searcht_id(user_id):
     cookies = dict(sessionid=session_id, userid=str(user_id))
     r = check_searcht(cookies)
     if r.get('r') != 0:
-        session['error_message'] = unquote(r.get('rd'))
+        session['error_message'] = regular_html(r.get('rd'))
+        red_log('手动执行', '进攻', user_id, regular_html(r.get('rd')))
         return redirect(url_for('excavators'))
     else:
         session['info_message'] = '获得:%s秘银.' % r.get('s')
+        red_log('手动执行', '进攻', user_id, '获得:%s秘银.' % r.get('s'))
     account_data_key = account_key + ':data'
     account_data_value = json.loads(r_session.get(account_data_key).decode("utf-8"))
     account_data_value.get('mine_info')['td_not_in_a'] = 0
@@ -209,9 +245,11 @@ def searcht_all():
         cookies = dict(sessionid=session_id, userid=str(user_id))
         r = check_searcht(cookies)
         if r.get('r') != 0:
-            error_message += 'Id:%s : %s<br />' % (user_id, unquote(r.get('rd')))
+            error_message += 'Id:%s : %s<br />' % (user_id, regular_html(r.get('rd')))
+            red_log('手动执行', '进攻', user_id, regular_html(r.get('rd')))
         else:
             success_message += 'Id:%s : 获得:%s秘银.<br />' % (user_id, r.get('s'))
+            red_log('手动执行', '进攻', user_id, '获得:%s秘银.' % r.get('s'))
             account_data_key = account_key + ':data'
             account_data_value = json.loads(r_session.get(account_data_key).decode("utf-8"))
             account_data_value.get('mine_info')['td_not_in_a'] = 0

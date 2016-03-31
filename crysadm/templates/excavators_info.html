@@ -104,11 +104,11 @@
                                     <span class="input-group-addon"><span style="width: 73px; display: inline-block;">时间</span></span>
                                     <input type="text" class="form-control" value="{{ dev.result[1].schedule_hours[0].from }}点至{{ dev.result[1].schedule_hours[0].to }}点" disabled>
                                     <span class="input-group-btn" style="padding-top: 0px;padding-bottom: 0px;">
-                                    {% if dev.result[1].schedule_hours[0].type == 'unlimit' %}
-                                        <button type="submit" class="btn btn-success">全速模式</button>
-                                    {% else %}
-                                        <button type="submit" class="btn btn-success">智能模式</button>
-                                    {% endif %}
+                                        {% if dev.result[1].schedule_hours[0].type == 'unlimit' %}
+                                            <button type="submit" class="btn btn-success">全速模式</button>
+                                        {% else %}
+                                            <button type="submit" class="btn btn-success">智能模式</button>
+                                        {% endif %}
                                     </span>
                                 </div>
                             </form>

@@ -176,7 +176,7 @@ def dashboard_today_income_share():
 
     return Response(json.dumps(dict(data=pie_data)), mimetype='application/json')
 
-
+# 同比产量
 @app.route('/dashboard/DoD_income')
 @requires_auth
 def dashboard_DoD_income():
@@ -186,14 +186,13 @@ def dashboard_DoD_income():
 
     user_info = json.loads(r_session.get(user_key).decode('utf-8'))
     if user_info.get('auto_column') != True:
-        ls = dashboard_DoD_income_1()
+        dod_income = DoD_income_yuanjiangong()
     else:
-        ls = dashboard_DoD_income_2()
+        dod_income = DoD_income_xunlei()
 
-    return ls
-
+    return dod_income
 # 默认统计
-def dashboard_DoD_income_1():
+def DoD_income_yuanjiangong():
     user = session.get('user_info')
     username = user.get('username')
 
@@ -289,7 +288,7 @@ def dashboard_DoD_income_1():
                                     )), mimetype='application/json')
 
 # 迅雷统计
-def dashboard_DoD_income_2():
+def DoD_income_xunlei():
     user = session.get('user_info')
     username = user.get('username')
 

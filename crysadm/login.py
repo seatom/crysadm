@@ -55,7 +55,6 @@ def old_login(username, md5_password):
     login_status = json.loads(r.text)
     return login_status
 
-
 def login(username, md5_password, encrypt_pwd_url=None):
     if encrypt_pwd_url is None or encrypt_pwd_url == '':
         return old_login(username, md5_password)

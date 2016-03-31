@@ -11,13 +11,28 @@ requests.packages.urllib3.disable_warnings()
 # 迅雷API接口
 appversion = '3.1.1'
 server_address = 'http://2-api-red.xunlei.com'
-agent_header = {'user-agent': "RedCrystal/3.0.0 (iPhone; iOS 9.8; Scale/2.00)"}
+agent_header = {'user-agent': "RedCrystal/3.0.0 (iPhone; iOS 9.9; Scale/2.00)"}
+
+# 负载均衡 2负载 1本地 示例 (适合没被封ip的，有本地发送)
+def api_proxies():
+    from random import randint
+    ks = randint(0,61)
+    if ks > 0 and ks < 21:
+        print('本次请求代理服务器1发送')
+        return {'http': 'http://123.57.15.92:63854'}# 代理服务器1、阿里云BGP机房 [爱转角]搭建
+    if ks > 21 and ks < 41:
+        print('本次请求代理服务器2发送')
+        return {'http': 'http://182.92.64.152:49629'}# 代理服务器2、阿里云BGP机房 [爱转角]搭建
+    if ks > 41 and ks < 61:
+        print('本次请求本地发送')
+        return {}
 
 # 提交迅雷链接，返回信息
 def api_post(cookies, url, data, verify=False, headers=agent_header, timeout=60):
     address = server_address + url
     try:
-        r = requests.post(url=address, data=data, verify=verify, headers=headers, cookies=cookies, timeout=timeout)        
+        proxies = api_proxies()
+        r = requests.post(url=address, data=data, proxies=proxies, verify=verify, headers=headers, cookies=cookies, timeout=timeout)        
     except requests.exceptions.RequestException as e:
         return __handle_exception(e=e)
 
@@ -94,7 +109,8 @@ def get_speed_stat(cookies):
     cookies['origin'] = '4' if len(cookies.get('sessionid')) == 128 else '2'
     body = dict(type='1', hand='0', v='0', ver='1')
     try:
-        r = requests.post(server_address + '/?r=mine/speed_stat', data=body, verify=False, cookies=cookies, headers=agent_header, timeout=60)
+        proxies = api_proxies()
+        r = requests.post(server_address + '/?r=mine/speed_stat', data=body, proxies=proxies, verify=False, cookies=cookies, headers=agent_header, timeout=60)
     except requests.exceptions.RequestException as e:
         __handle_exception(e=e)
         return [0] * 24
@@ -190,7 +206,8 @@ def ubus_cd(session_id, account_id, action, out_params, url_param=None):
         body = dict(data=json.dumps(data), action='onResponse%d' % int(time.time() * 1000))
         s = requests.Session()
         s.mount('http://', HTTPAdapter(max_retries=5))
-        r = s.post(url, data=body)
+        proxies = api_proxies()
+        r = s.post(url, data=body, proxies=proxies)
         result = r.text[r.text.index('{'):r.text.rindex('}')+1]
         return json.loads(result)
 
@@ -235,4 +252,4 @@ def __handle_exception(e=None, rd='接口故障', r=-12345):
 
     r_session.setex('api_error_count', str(err_count), err_count_ttl + 1)
     return dict(r=r, rd=rd)
-# @爱转角遇见了谁[2016-3-27]更新
+# @爱转角遇见了谁[2016-3-31]更新
