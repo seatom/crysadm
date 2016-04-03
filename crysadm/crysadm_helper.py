@@ -419,21 +419,21 @@ def regular_html(info):
 # 自动日记记录
 def red_log(cook, clas, type, gets):
     user = cook.get('user_info')
-    username = user.get('username')
-    id = cook.get('userid')
 
-    if user.get('log_as_body') is None:
-        user['log_as_body'] = []
+    record_key = '%s:%s' % ('record', user.get('username'))
+    record_info = json.loads(r_session.get(record_key).decode('utf-8'))
+
+    id = cook.get('userid')
 
     log_as_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     body = dict(time=log_as_time, clas=clas, type=type, id=id, gets=gets)
 
-    log_as_body = user.get('log_as_body')
+    log_as_body = record_info.get('diary')
     log_as_body.append(body)
 
-    user['log_as_body'] = log_as_body
+    record_info['diary'] = log_as_body
 
-    r_session.set('%s:%s' % ('user', username), json.dumps(user))
+    r_session.set(record_key, json.dumps(record_info))
 
 # 计时器函数，定期执行某个线程，时间单位为秒
 def timer(func, seconds):

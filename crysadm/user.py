@@ -30,6 +30,17 @@ def user_login():
         session['error_message'] = '您的账号已被禁用.'
         return redirect(url_for('login'))
 
+    if user.get('log_as_body') is not None:
+        if len(user.get('log_as_body')) > 0:
+            r_session.set('%s:%s' % ('record', username), json.dumps(dict(diary=user.get('log_as_body')))) # 创建新通道,转移原本日记
+            user['log_as_body'] = []
+
+    user['login_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S') # 记录登陆时间
+    r_session.set('%s:%s' % ('user', username), json.dumps(user)) # 修正数据
+
+    if r_session.get('%s:%s' % ('record', username)) is None:
+        r_session.set('%s:%s' % ('record', username), json.dumps(dict(diary=[]))) # 创建缺失的日记
+
     session['user_info'] = user
 
     return redirect(url_for('dashboard'))
@@ -67,33 +78,38 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
+
 @app.route('/log')
 @requires_auth
 def user_log():
     log_as = []
     user = session.get('user_info')
 
-    if user.get('log_as_body') is None:
-        user['log_as_body'] = []
+    record_key = '%s:%s' % ('record', user.get('username'))
+    record_info = json.loads(r_session.get(record_key).decode('utf-8'))
 
-    for row in user.get('log_as_body'):
+    for row in record_info.get('diary'):
         if (datetime.now() - datetime.strptime(row.get('time'), '%Y-%m-%d %H:%M:%S')).days < 7:
             log_as.append(row)
     log_as.reverse()
 
     return render_template('log.html', log_user=log_as)
 
+
 @app.route('/log/delete')
 @requires_auth
 def user_log_delete():
     user = session.get('user_info')
-    username = user.get('username')
 
-    user['log_as_body'] = []
+    record_key = '%s:%s' % ('record', user.get('username'))
+    record_info = json.loads(r_session.get(record_key).decode('utf-8'))
 
-    r_session.set('%s:%s' % ('user', username), json.dumps(user))
+    record_info['diary'] = []
+
+    r_session.set(record_key, json.dumps(record_info))
 
     return redirect(url_for('user_log'))
+
 
 @app.route('/user/profile')
 @requires_auth
@@ -255,6 +271,7 @@ def user_register():
                 active=True, is_admin=False, max_account_no=20,
                 created_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     r_session.set('%s:%s' % ('user', username), json.dumps(user))
+    r_session.set('%s:%s' % ('record', username), json.dumps(dict(diary=[])))
     r_session.sadd('users', username)
 
     session['info_message'] = '恭喜你，注册成功.'

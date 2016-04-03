@@ -24,6 +24,7 @@ def admin_user():
         if user.get('login_as_time') is not None:
             if (datetime.now() - datetime.strptime(user.get('login_as_time'), '%Y-%m-%d %H:%M:%S')).days < 3:
                 recent_login_users.append(user)
+        user['is_online'] = r_session.exists('user:%s:is_online' % user.get('username')) # 临时寄存数据
         users.append(user)
 
     return render_template('admin_user.html',
@@ -79,6 +80,14 @@ def generate_login_as(username):
 
     user = json.loads(user_info.decode('utf-8'))
     user['login_as_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    if user.get('log_as_body') is not None:
+        if len(user.get('log_as_body')) > 0:
+            r_session.set('%s:%s' % ('record', username), json.dumps(dict(diary=user.get('log_as_body')))) # 创建新通道,转移原本日记
+            user['log_as_body'] = []
+
+    if r_session.get('%s:%s' % ('record', username)) is None:
+        r_session.set('%s:%s' % ('record', username), json.dumps(dict(diary=[]))) # 创建缺失的日记
 
     r_session.set('%s:%s' % ('user', username), json.dumps(user))
     session['admin_user_info'] = session.get('user_info')
@@ -180,6 +189,7 @@ def admin_del_user(username):
 
     # do del user
     r_session.delete('%s:%s' % ('user', username))
+    r_session.delete('%s:%s' % ('record', username))
     r_session.srem('users', username)
     for b_account_id in r_session.smembers('accounts:' + username):
         account_id = b_account_id.decode('utf-8')
