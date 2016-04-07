@@ -241,6 +241,7 @@ def select_auto_task_user():
     auto_drawcash_accounts = []
     auto_giftbox_accounts = []
     auto_searcht_accounts = []
+    auto_revenge_accounts = []
     auto_getaward_accounts = []
     for b_user in r_session.mget(*['user:%s' % name.decode('utf-8') for name in r_session.smembers('users')]):
         user_info = json.loads(b_user.decode('utf-8'))
@@ -258,6 +259,7 @@ def select_auto_task_user():
             if user_info.get('auto_drawcash'): auto_drawcash_accounts.append(cookies)
             if user_info.get('auto_giftbox'): auto_giftbox_accounts.append(cookies)
             if user_info.get('auto_searcht'): auto_searcht_accounts.append(cookies)
+            if user_info.get('auto_revenge'): auto_revenge_accounts.append(cookies)
             if user_info.get('auto_getaward'): auto_getaward_accounts.append(cookies)
     r_session.delete('global:auto.collect.cookies')
     r_session.sadd('global:auto.collect.cookies', *auto_collect_accounts)
@@ -267,6 +269,8 @@ def select_auto_task_user():
     r_session.sadd('global:auto.giftbox.cookies', *auto_giftbox_accounts)
     r_session.delete('global:auto.searcht.cookies')
     r_session.sadd('global:auto.searcht.cookies', *auto_searcht_accounts)
+    r_session.delete('global:auto.revenge.cookies')
+    r_session.sadd('global:auto.revenge.cookies', *auto_revenge_accounts)
     r_session.delete('global:auto.getaward.cookies')
     r_session.sadd('global:auto.getaward.cookies', *auto_getaward_accounts)
 
@@ -337,6 +341,29 @@ def check_searcht(user, cookies):
         red_log(user, '自动执行', '进攻', log)
     time.sleep(3)
 
+# 执行秘银复仇函数
+def check_revenge(user, cookies):
+    print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'check_revenge')
+    r = api_steal_stolenSilverHistory(cookies)
+    time.sleep(2)
+    if r.get('r') != 0: return
+    for q in r.get('list'):
+        if q.get('st') == 0:
+            steal_info = api_steal_search(cookies, q.get('sid'))
+            if steal_info.get('r') != 0:
+                log = regular_html(r.get('rd'))
+            else:
+                time.sleep(3)
+                t = api_steal_collect(cookies=cookies, searcht_id=steal_info.get('sid'))
+                if t.get('r') != 0:
+                    log = 'Forbidden'
+                else:
+                    log = '获得:%s秘银.' % t.get('s')
+                    time.sleep(1)
+                    api_steal_summary(cookies=cookies, searcht_id=steal_info.get('sid'))
+            red_log(user, '自动执行', '复仇', log)
+    time.sleep(3)
+
 # 执行幸运转盘函数
 def check_getaward(user, cookies):
     print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'check_getaward')
@@ -384,6 +411,14 @@ def searcht_crystal():
     print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'searcht_crystal')
 
     cookies_auto(check_searcht, 'global:auto.searcht.cookies')
+#    for cookie in r_session.smembers('global:auto.searcht.cookies'):
+#        check_searcht(json.loads(cookie.decode('utf-8')))
+
+# 秘银复仇
+def revenge_crystal():
+    print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'revenge_crystal')
+
+    cookies_auto(check_revenge, 'global:auto.revenge.cookies')
 #    for cookie in r_session.smembers('global:auto.searcht.cookies'):
 #        check_searcht(json.loads(cookie.decode('utf-8')))
 
@@ -455,6 +490,9 @@ if __name__ == '__main__':
     # 执行秘银进攻时间，单位为秒，默认为360秒。
     # 每360分钟检测一次秘银进攻
     threading.Thread(target=timer, args=(searcht_crystal, 60*60*6)).start()
+    # 执行秘银复仇时间，单位为秒，默认为300秒。
+    # 每300分钟检测一次秘银复仇
+    threading.Thread(target=timer, args=(revenge_crystal, 60*60*5)).start()
     # 执行幸运转盘时间，单位为秒，默认为240秒。
     # 每240分钟检测一次幸运转盘
     threading.Thread(target=timer, args=(getaward_crystal, 60*60*4)).start()

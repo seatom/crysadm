@@ -133,6 +133,20 @@
                             </div>
                         </form>
 
+                        <form role="form" action="/admin/change_property/auto_revenge/{% if user.auto_revenge %}O{% else %}1{% endif %}/{{ user.username|e }}" method="post">
+                            <div class="form-group input-group">
+                                <span class="input-group-addon"><i style="width: 16px;" class="fa fa-rmb"></i></span>
+                                <input type="text" class="form-control" value="{% if user.auto_revenge %}O{% else %}X{% endif %}" disabled />
+                                <span class="input-group-btn" style="padding-top: 0px;padding-bottom: 0px;">
+                                {% if user.auto_revenge  %}
+                                    <button type="submit" class="btn btn-danger" style="text-align:left; width: 117px;">取消秘银复仇</button>
+                                {% else %}
+                                    <button type="submit" class="btn btn-success" style="text-align:left; width: 117px;">秘银复仇</button>
+                                {% endif %}
+                                </span>
+                            </div>
+                        </form>
+
                         <form role="form" action="/admin/change_property/auto_getaward/{% if user.auto_getaward %}O{% else %}1{% endif %}/{{ user.username|e }}" method="post">
                             <div class="form-group input-group">
                                 <span class="input-group-addon"><i style="width: 16px;" class="fa fa-rmb"></i></span>

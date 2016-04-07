@@ -27,6 +27,22 @@ run.sh是运行脚本，down.sh是停止脚本，setup.sh是安装环境脚本�
 - 默认端口：4000
 - 第一次获得密码方法：浏览器打开【IP:4000/install】
 
+
+
+##  2016.04.05 更新 v4.0501 （本次改动文件:api.py,admin.py,crysadm_helper.py,user.py,profile.html,user_management.html）
+添加秘银复仇接口
+添加秘银复仇函数
+添加秘银复仇按钮
+
+##  2016.04.03 更新 v4.0301 （本次改动文件:admin.py,admin_user.html,user.py）
+添加用户管理登陆时间显示
+添加用户管理登陆状态显示
+
+##  2016.04.02 更新 v4.0201 （本次改动文件:admin.py,crysadm_helper.py,excavator.py,user.py）
+修复运行日记显示登陆时不刷新问题
+修复部分用户登陆失败出现502错误
+注意：需重新登陆
+
 ##  2016.03.31 更新 v3.3101
 
 添加运行日记

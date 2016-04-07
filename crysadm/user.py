@@ -171,6 +171,8 @@ def user_change_property(field, value):
         user_info['auto_giftbox'] = True if value == '1' else False
     if field == 'auto_searcht':
         user_info['auto_searcht'] = True if value == '1' else False
+    if field == 'auto_revenge':
+        user_info['auto_revenge'] = True if value == '1' else False
     if field == 'auto_getaward':
         user_info['auto_getaward'] = True if value == '1' else False
 

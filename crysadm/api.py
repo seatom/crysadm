@@ -13,19 +13,9 @@ appversion = '3.1.1'
 server_address = 'http://2-api-red.xunlei.com'
 agent_header = {'user-agent': "RedCrystal/3.0.0 (iPhone; iOS 9.9; Scale/2.00)"}
 
-# 负载均衡 2负载 1本地 示例 (适合没被封ip的，有本地发送)
+# 负载均衡
 def api_proxies():
-    from random import randint
-    ks = randint(0,61)
-    if ks > 0 and ks < 21:
-        print('本次请求代理服务器1发送')
-        return {'http': 'http://123.57.15.92:63854'}# 代理服务器1、阿里云BGP机房 [爱转角]搭建
-    if ks > 21 and ks < 41:
-        print('本次请求代理服务器2发送')
-        return {'http': 'http://182.92.64.152:49629'}# 代理服务器2、阿里云BGP机房 [爱转角]搭建
-    if ks > 41 and ks < 61:
-        print('本次请求本地发送')
-        return {}
+    return {}
 
 # 提交迅雷链接，返回信息
 def api_post(cookies, url, data, verify=False, headers=agent_header, timeout=60):
@@ -175,10 +165,16 @@ def api_sys_getEntry(cookies):
     body = dict(v='6')
     return api_post(url='/?r=sys/getEntry', data=body, cookies=cookies)
 
-# 提交秘银进攻请求
-def api_steal_search(cookies):
+# 获取秘银复仇信息
+def api_steal_stolenSilverHistory(cookies):
     cookies['origin'] = '4' if len(cookies.get('sessionid')) == 128 else '1'
-    body = dict(v='2')
+    body = dict(v='2', p='0', ps='20')
+    return api_post(url='/?r=steal/stolenSilverHistory', data=body, cookies=cookies)
+
+# 提交秘银进攻请求
+def api_steal_search(cookies, searcht_id=0):
+    cookies['origin'] = '4' if len(cookies.get('sessionid')) == 128 else '1'
+    body = dict(v='2', sid=str(searcht_id))
     return api_post(url='/?r=steal/search', data=body, cookies=cookies)
 
 # 提交收集秘银请求
