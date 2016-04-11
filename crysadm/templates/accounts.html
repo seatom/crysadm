@@ -55,6 +55,14 @@
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     已添加账号
+                    {% if accounts|length >0 %}
+                        <form style="margin-left: 3px;float:right;" role="form" action="/accounts/inactive_all" method="post">
+                            <button type="submit" style="margin: 0px;" class="btn btn-outline btn-success btn-xs">全部停止</button>
+                        </form>
+                        <form style="margin-left: 3px;float:right;" role="form" action="/accounts/active_all" method="post">
+                            <button type="submit" style="margin: 0px;" class="btn btn-outline btn-success btn-xs">全部启用</button>
+                        </form>
+                    {% endif %}
                 </div>
                 <!-- /.panel-heading -->
                 <div class="ibox-content">

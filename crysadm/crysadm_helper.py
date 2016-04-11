@@ -60,7 +60,7 @@ def get_data(username):
                 print('get_data:', user_id, mine_info, 'error')
                 continue
 
-            device_info = ubus_cd(session_id, user_id, 'get_devices', ["server", "get_devices", {}], '&action=%donResponse' % int(time.time()*1000))
+            device_info = ubus_cd(session_id, user_id, 'get_devices', ["server", "get_devices", {}])
             red_zqb = device_info['result'][1]
 
             account_data_key = account_key + ':data'
@@ -81,7 +81,7 @@ def get_data(username):
             account_data['updated_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             account_data['mine_info'] = mine_info
             account_data['device_info'] = red_zqb.get('devices')
-            account_data['income'] = get_income_info(cookies)
+            account_data['income'] = get_balance_info(cookies)
             account_data['produce_info'] = get_produce_stat(cookies)
 
             if is_api_error(account_data.get('income')):

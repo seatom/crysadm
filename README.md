@@ -27,7 +27,14 @@ run.sh是运行脚本，down.sh是停止脚本，setup.sh是安装环境脚本�
 - 默认端口：4000
 - 第一次获得密码方法：浏览器打开【IP:4000/install】
 
-
+##  2016.04.10 更新 v4.1001 （本次改动文件:account.py,api.py,crysadm_helper.py,login.py,accounts.html）
+删除无用接口
+添加双重登陆接口
+更新部分接口参数
+添加迅雷账号全部启用函数
+添加迅雷账号全部停用函数
+添加迅雷账号全部启用按钮
+添加迅雷账号全部停用按钮
 
 ##  2016.04.05 更新 v4.0501 （本次改动文件:api.py,admin.py,crysadm_helper.py,user.py,profile.html,user_management.html）
 添加秘银复仇接口
