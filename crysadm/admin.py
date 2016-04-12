@@ -32,6 +32,46 @@ def admin_user():
                                                      reverse=True),
                            users=users)
 
+# 系统管理 => 站点记录
+@app.route('/guest')
+@requires_admin
+def admin_guest():
+    guest = []
+
+    guest_key = 'guest'
+    if r_session.get(guest_key) is None:
+        r_session.set(guest_key, json.dumps(dict(diary=[])))
+    guest_info = json.loads(r_session.get(guest_key).decode('utf-8'))
+
+    for row in guest_info.get('diary'):
+        if (datetime.now() - datetime.strptime(row.get('time'), '%Y-%m-%d %H:%M:%S')).days < 2:
+            guest.append(row)
+    guest.reverse()
+
+    return render_template('guest.html', guest=guest)
+
+# 系统管理 => 删除站点记录
+@app.route('/guest/delete')
+@requires_admin
+def admin_guest_delete():
+
+    guest_key = 'guest'
+    guest_info = json.loads(r_session.get(guest_key).decode('utf-8'))
+
+    guest_info['diary'] = []
+
+    r_session.set(guest_key, json.dumps(guest_info))
+
+    return redirect(url_for('admin_guest'))
+
+# 系统管理 => 关于
+@app.route('/about')
+@requires_admin
+def admin_about():
+    import platform
+    version = '当前版本：2016-04-12'
+    return render_template('about.html', platform=platform, version=version)
+
 # 系统管理 => 通知管理
 @app.route('/admin/message')
 @requires_admin

@@ -59,11 +59,15 @@
 
 ] -%}
 {% set navigation_admin_bar = [
+    ('talk','/talk', '<i class="fa fa-fw fa-comments"></i>', '站长交流',[]),
     ('admin','/#', '<i class="fa fa-fw fa-gear"></i>', '系统管理',[
         ('admin_user','/admin/user', '用户管理'),
         ('admin_message','/admin/message', '通知管理'),
         ('admin_invitation','/admin/invitation', '邀请管理')
-    ])
+    ]),
+    ('guest','/guest', '<i class="fa fa-fw fa-recycle"></i>', '站点记录',[]),
+    ('about','/about', '<i class="fa fa-fw fa-info-circle"></i>', '关于',[])
+
 ] -%}
 {% set active_page = active_page|default('index_temp') -%}
 

@@ -563,7 +563,7 @@
                 if($('#live_speed').html() !== convert_speed(data.today_data.last_speed)){
                     $('#live_speed').html(convert_speed(data.today_data.last_speed));
 
-                    if(data.today_data.last_speed > 1024){
+                    if(data.today_data.last_speed >= 1024){
                         $('#speed_unit').html('M')
                     }else{
                         $('#speed_unit').html('K')
@@ -573,7 +573,7 @@
                 if($('#down_speed').html() !== convert_speed(data.today_data.deploy_speed)){
                     $('#down_speed').html(convert_speed(data.today_data.deploy_speed));
 
-                    if(data.today_data.deploy_speed > 1024){
+                    if(data.today_data.deploy_speed >= 1024){
                         $('#speed2_unit').html('M')
                     }else{
                         $('#speed2_unit').html('K')

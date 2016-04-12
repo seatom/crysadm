@@ -28,9 +28,9 @@ def __get_yesterday_pdc(username):
             continue
 
         history_data = json.loads(b_data.decode('utf-8'))
-        if begin_date >= month_start_date:
+        if begin_date >= month_start_date and begin_date < today.date():
             yesterday_m_pdc += history_data.get('pdc')
-        if begin_date >= week_start_date:
+        if begin_date >= week_start_date and begin_date < today.date():
             yesterday_w_pdc += history_data.get('pdc')
 
     return yesterday_m_pdc, yesterday_w_pdc
@@ -383,6 +383,7 @@ def install():
                     active=True, is_admin=True, max_account_no=5,
                     created_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         r_session.set('%s:%s' % ('user', username), json.dumps(user))
+        r_session.set('%s:%s' % ('record', username), json.dumps(dict(diary=[])))
         r_session.sadd('users', username)
         return 'username:%s,password:%s' % (username, password)
 

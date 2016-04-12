@@ -27,6 +27,17 @@ run.sh是运行脚本，down.sh是停止脚本，setup.sh是安装环境脚本�
 - 默认端口：4000
 - 第一次获得密码方法：浏览器打开【IP:4000/install】
 
+##  2016.04.12 更新 v4.1001 （本次改动文件:admin.py,user.py,base.html）
+新增关于页面
+新增站长交流页面
+新增站点记录页面
+
+##  2016.04.11 更新 v4.1101 （本次改动文件:crysadm_helper.py,web_common.py,dashboard.html）
+修复监控中心速度换算判断
+修复数据中心数据有效判断
+修复Install 账号日记错误
+修复本周收益不正常问题
+
 ##  2016.04.10 更新 v4.1001 （本次改动文件:account.py,api.py,crysadm_helper.py,login.py,accounts.html）
 删除无用接口
 添加双重登陆接口

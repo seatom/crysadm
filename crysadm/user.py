@@ -43,6 +43,8 @@ def user_login():
 
     session['user_info'] = user
 
+    guest(request, username)
+
     return redirect(url_for('dashboard'))
 
 
@@ -109,6 +111,41 @@ def user_log_delete():
     r_session.set(record_key, json.dumps(record_info))
 
     return redirect(url_for('user_log'))
+
+
+@app.route('/talk')
+@requires_auth
+def user_talk():
+
+    return render_template('talk.html')
+
+
+def guest(request, username):
+
+    guest_key = 'guest'
+    if r_session.get(guest_key) is None:
+        r_session.set(guest_key, json.dumps(dict(diary=[])))
+    guest_info = json.loads(r_session.get(guest_key).decode('utf-8'))
+
+    guest_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S') #时间
+
+    url_scheme = request.environ.get('wsgi.url_scheme') #请求头
+    HTTP_HOST = request.environ.get('HTTP_HOST') #地址
+    PATH_INFO = request.environ.get('PATH_INFO') #后缀
+    REQUEST_METHOD = request.environ.get('REQUEST_METHOD') #方式
+    HTTP_X_REAL_IP = request.environ.get('HTTP_X_REAL_IP') #IP
+    REMOTE_PORT = request.environ.get('REMOTE_PORT') #端口
+
+    http = '%s://%s%s' % (url_scheme, HTTP_HOST, PATH_INFO) #链接
+
+    body = dict(time=guest_time, http=http, method=REQUEST_METHOD, ip=HTTP_X_REAL_IP, port=REMOTE_PORT, username=username)
+
+    guest_body = guest_info.get('diary')
+    guest_body.append(body)
+
+    guest_info['diary'] = guest_body
+
+    r_session.set(guest_key, json.dumps(guest_info))
 
 
 @app.route('/user/profile')
