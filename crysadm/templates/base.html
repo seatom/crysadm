@@ -65,7 +65,10 @@
         ('admin_message','/admin/message', '通知管理'),
         ('admin_invitation','/admin/invitation', '邀请管理')
     ]),
-    ('guest','/guest', '<i class="fa fa-fw fa-recycle"></i>', '站点记录',[]),
+    ('guest','/#', '<i class="fa fa-fw fa-recycle"></i>', '站点监控',[
+        ('guest','/guest', '站点记录'),
+        ('invitation','/guest/invitation', '邀请记录')
+    ]),
     ('about','/about', '<i class="fa fa-fw fa-info-circle"></i>', '关于',[])
 
 ] -%}

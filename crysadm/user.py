@@ -43,7 +43,7 @@ def user_login():
 
     session['user_info'] = user
 
-    guest(request, username)
+    guest_diary(request, username)
 
     return redirect(url_for('dashboard'))
 
@@ -63,10 +63,59 @@ def login():
 
 @app.route('/invitations')
 def public_invitation():
+    if session.get('user_info') is not None:
+        return redirect(url_for('dashboard'))
+
+    err_msg = None
+    if session.get('error_message') is not None:
+        err_msg = session.get('error_message')
+        session['error_message'] = None
+
+    inv_code = None
+    if session.get('invitation_code') is not None:
+        inv_code = session.get('invitation_code')
+        session['invitation_code'] = None
+
+    HTTP_X_REAL_IP = request.environ.get('HTTP_X_REAL_IP')
+
+    return render_template('public_invitation.html', err_msg=err_msg, inv_code=inv_code, ip=HTTP_X_REAL_IP)
+
+
+@app.route('/inv_codes', methods=['POST'])
+def public_inv_code():
+
+    public_key = 'invitation'
+    if r_session.get(public_key) is None:
+        r_session.set(public_key, json.dumps(dict(diary=[])))
+    public_info = json.loads(r_session.get(public_key).decode('utf-8'))
+
+    HTTP_X_REAL_IP = request.environ.get('HTTP_X_REAL_IP')
+    for public_code in public_info.get('diary'):
+        if HTTP_X_REAL_IP == public_code.get('ip'):
+            session['error_message'] = '您已经获取过邀请码了,请勿重复获取.'
+            session['invitation_code'] = public_code.get('inv_code')
+            return redirect(url_for('public_invitation'))
+
     inv_codes = r_session.smembers('public_invitation_codes')
+    if not inv_codes:
+        session['error_message'] = '暂时没有可用的邀请码,请稍后再试.'
+        return redirect(url_for('public_invitation'))
 
-    return render_template('public_invitation.html', inv_codes=inv_codes)
+    for code in inv_codes: continue
+    invitation_code = code.decode('utf-8')
 
+    public_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    body = dict(time=public_time, inv_code=invitation_code, ip=HTTP_X_REAL_IP)
+
+    public_body = public_info.get('diary')
+    public_body.append(body)
+
+    public_info['diary'] = public_body
+
+    r_session.set(public_key, json.dumps(public_info))
+
+    return render_template('register.html', invitation_code=invitation_code)
 
 
 @app.route('/user/logout')
@@ -76,6 +125,9 @@ def logout():
         session['user_info'] = session.get('admin_user_info')
         del session['admin_user_info']
         return redirect(url_for('admin_user'))
+
+    user = session.get('user_info')
+    guest_diary(request, user.get('username'))
 
     session.clear()
     return redirect(url_for('login'))
@@ -113,14 +165,7 @@ def user_log_delete():
     return redirect(url_for('user_log'))
 
 
-@app.route('/talk')
-@requires_auth
-def user_talk():
-
-    return render_template('talk.html')
-
-
-def guest(request, username):
+def guest_diary(request, username):
 
     guest_key = 'guest'
     if r_session.get(guest_key) is None:

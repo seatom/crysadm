@@ -32,46 +32,6 @@ def admin_user():
                                                      reverse=True),
                            users=users)
 
-# 系统管理 => 站点记录
-@app.route('/guest')
-@requires_admin
-def admin_guest():
-    guest = []
-
-    guest_key = 'guest'
-    if r_session.get(guest_key) is None:
-        r_session.set(guest_key, json.dumps(dict(diary=[])))
-    guest_info = json.loads(r_session.get(guest_key).decode('utf-8'))
-
-    for row in guest_info.get('diary'):
-        if (datetime.now() - datetime.strptime(row.get('time'), '%Y-%m-%d %H:%M:%S')).days < 2:
-            guest.append(row)
-    guest.reverse()
-
-    return render_template('guest.html', guest=guest)
-
-# 系统管理 => 删除站点记录
-@app.route('/guest/delete')
-@requires_admin
-def admin_guest_delete():
-
-    guest_key = 'guest'
-    guest_info = json.loads(r_session.get(guest_key).decode('utf-8'))
-
-    guest_info['diary'] = []
-
-    r_session.set(guest_key, json.dumps(guest_info))
-
-    return redirect(url_for('admin_guest'))
-
-# 系统管理 => 关于
-@app.route('/about')
-@requires_admin
-def admin_about():
-    import platform
-    version = '当前版本：2016-04-12'
-    return render_template('about.html', platform=platform, version=version)
-
 # 系统管理 => 通知管理
 @app.route('/admin/message')
 @requires_admin
@@ -319,3 +279,82 @@ def admin_message_send():
         send_msg(to, subject, send_content, 3600 * 24)
 
     return redirect(url_for(endpoint='admin_message'))
+
+# 站长交流
+@app.route('/talk')
+@requires_admin
+def admin_talk():
+
+    return render_template('talk.html')
+
+# 站点监控 => 站点记录
+@app.route('/guest')
+@requires_admin
+def admin_guest():
+    guest_as = []
+
+    guest_key = 'guest'
+    if r_session.get(guest_key) is None:
+        r_session.set(guest_key, json.dumps(dict(diary=[])))
+    guest_info = json.loads(r_session.get(guest_key).decode('utf-8'))
+
+    for row in guest_info.get('diary'):
+        if (datetime.now() - datetime.strptime(row.get('time'), '%Y-%m-%d %H:%M:%S')).days < 2:
+            guest_as.append(row)
+    guest_as.reverse()
+
+    return render_template('guest.html', guest_as=guest_as)
+
+# 系统管理 => 删除站点记录
+@app.route('/guest/delete')
+@requires_admin
+def admin_guest_delete():
+
+    guest_key = 'guest'
+    guest_info = json.loads(r_session.get(guest_key).decode('utf-8'))
+
+    guest_info['diary'] = []
+
+    r_session.set(guest_key, json.dumps(guest_info))
+
+    return redirect(url_for('admin_guest'))
+
+# 站点监控 => 邀请记录
+@app.route('/guest/invitation')
+@requires_admin
+def guest_invitation():
+    public_as = []
+
+    public_key = 'invitation'
+    if r_session.get(public_key) is None:
+        r_session.set(public_key, json.dumps(dict(diary=[])))
+    public_info = json.loads(r_session.get(public_key).decode('utf-8'))
+
+    for row in public_info.get('diary'):
+        if (datetime.now() - datetime.strptime(row.get('time'), '%Y-%m-%d %H:%M:%S')).days < 7:
+            public_as.append(row)
+    public_as.reverse()
+
+    return render_template('guest_invitation.html', public_as=public_as)
+
+# 站点监控 => 删除邀请记录
+@app.route('/guest/invitation/delete')
+@requires_admin
+def guest_invitation_delete():
+
+    public_key = 'invitation'
+    public_info = json.loads(r_session.get(public_key).decode('utf-8'))
+
+    public_info['diary'] = []
+
+    r_session.set(public_key, json.dumps(public_info))
+
+    return redirect(url_for('guest_invitation'))
+
+# 系统管理 => 关于
+@app.route('/about')
+@requires_admin
+def admin_about():
+    import platform
+    version = '当前版本：2016-04-12'
+    return render_template('about.html', platform=platform, version=version)
