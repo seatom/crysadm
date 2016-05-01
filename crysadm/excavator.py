@@ -62,9 +62,13 @@ def red_log(clas, type, id, gets):
     body = dict(time=log_as_time, clas=clas, type=type, id=id, gets=gets)
 
     log_as_body = record_info.get('diary')
-    log_as_body.append(body)
+    log_trimed = []
+    for item in log_as_body:
+       if (datetime.now() - datetime.strptime(item.get('time'), '%Y-%m-%d %H:%M:%S')).days < 31:
+           log_trimed.append(item)
+    log_trimed.append(body)
 
-    record_info['diary'] = log_as_body
+    record_info['diary'] = log_trimed
 
     r_session.set(record_key, json.dumps(record_info))
 

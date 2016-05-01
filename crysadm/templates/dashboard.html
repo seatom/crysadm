@@ -18,7 +18,7 @@
 {% block content %}
 
     <div class="row">    
-        <div class="col-lg-3 col-md-6">
+        <div class="col-lg-3 col-md-4 col-xs-6">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <span class="label label-success pull-right" style="padding-top: 5px;">实时</span>
@@ -38,7 +38,7 @@
             </div>
         </div>
 
-        <div class="col-lg-3 col-md-6">
+        <div class="col-lg-3 col-md-4 col-xs-6">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <span class="label label-success pull-right" style="padding-top: 5px;">实时</span>
@@ -58,42 +58,67 @@
             </div>
         </div>
 
-        <div class="col-lg-3 col-md-6">
+        <div class="col-lg-3 col-md-4 col-xs-6">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <span class="label label-info pull-right" style="padding-top: 5px;">今日</span>
                     <h5>水晶产量</h5>
                 </div>
-                <div class="ibox-content">
+                <div class="ibox-content" style="height: 88px;">
                     <div class="row">
                         <div class="col-xs-3">
                             <i class="fa fa-rmb fa-4x"></i>
                         </div>
                         <div class="col-xs-9 text-right" style="padding-left: 5px;">
-                            <h1 style="font-size: 44px; font-weight: bold;" class="no-margins" id="pdc"></h1>
+                            <h1 style="font-size: 33px; font-weight: bold;" class="no-margins" id="pdc"></h1>
+                            <small style=" font-weight: bold;"><span id="pdc_unit"></span></small>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-3 col-md-6">
+        <div class="col-lg-3 col-md-4 col-xs-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <span class="label label-info pull-right" style="padding-top: 5px;">今日</span>
+                    <h5>宝箱转盘</h5>
+                </div>
+                <div class="ibox-content" style="height: 88px;">
+
+                    <div class="row">
+                        <div class="col-xs-12 text-right" style="padding-left: 5px;">
+                            <h1 style="font-size: 33px; font-weight: bold;" class="no-margins" id="award_income"></h1>
+                            <small style=" font-weight: bold;"><span id="award_income_unit"></span></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div >
+
+        <div class="col-lg-3 col-md-4 col-xs-6">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <span class="label label-primary pull-right" style="padding-top: 5px;">本周</span>
-                    <h5>水晶产量</h5>
+                    {% if user_info.is_show_wpdc != True %}
+                        <h5>宝箱转盘</h5>
+                    {% else %}
+                        <h5>水晶产量</h5>
+                    {% endif %}
                 </div>
                 <div class="ibox-content" style="height: 88px;">
+
                     <div class="row">
                         <div class="col-xs-12 text-right" style="padding-left: 5px;">
-                            <h1 style="font-size: 44px; font-weight: bold;" class="no-margins" id="w_pdc"></h1>
+                            <h1 style="font-size: 33px; font-weight: bold;" class="no-margins" id="w_award_income"></h1>
+                            <small style=" font-weight: bold;"><span id="w_award_income_unit"></span></small>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
 
-        <div class="col-lg-3 col-md-6">
+        <div class="col-lg-3 col-md-4 col-xs-6">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <span class="label label-danger pull-right" style="padding-top: 5px;">本月</span>
@@ -102,12 +127,14 @@
                 <div class="ibox-content" style="height: 88px;">
                     <div class="row">
                         <div class="col-xs-12 text-right" style="padding-left: 5px;">
-                            <h1 style="font-size: 44px; font-weight: bold;" class="no-margins" id="m_pdc"></h1>
+                            <h1 style="font-size: 33px; font-weight: bold;" class="no-margins" id="m_pdc"></h1>
+                            <small style=" font-weight: bold;"><span id="m_pdc_unit"></span></small>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
     <div class="row">
         <div class="col-lg-12">
@@ -232,12 +259,12 @@
     <script>
         function convert_to_yuan(crystal_values) {
             if (crystal_values >= 10000) {
-                return parseInt(crystal_values / 1000) / 10 + '元';
+                return parseInt(crystal_values / 1000) / 10;
             }
             if (crystal_values >= 1000) {
-                return parseInt(crystal_values / 100) / 100 + '元';
+                return parseInt(crystal_values / 100) / 100;
             }
-            return crystal_values + '个';
+            return crystal_values;
         }
         function convert_speed(speed) {
             if (speed >= 1024) {
@@ -554,10 +581,15 @@
             }]
         });
 
-
+        var load_hourly_speed_detail = function(){
+            $.getJSON('/dashboard/DoD_income?random='+Math.random(),function(r_data) {
+                $('#DoD-income').highcharts().series[3].setData(r_data.series[3].data);
+            });
+        }
 
         var reload_data = function(){
             load_speed_share();
+            load_hourly_speed_detail();
             $.getJSON( "/dashboard_data?random="+Math.random(), function( data ) {
                 $('#real_time_speed').highcharts().series[0].addPoint([(new Date()).getTime(),data.today_data.last_speed], true, true);
                 if($('#live_speed').html() !== convert_speed(data.today_data.last_speed)){
@@ -582,16 +614,41 @@
                 }
                 if($('#pdc').html() !== convert_to_yuan(data.today_data.pdc)) {
                     $('#pdc').html(convert_to_yuan(data.today_data.pdc));
+                    if(data.today_data.pdc >= 1000){
+                        $('#pdc_unit').html('元')
+                    }else{
+                        $('#pdc_unit').html('个')
+                    }
                     flash_element($('#pdc'));
-                }
-                if($('#w_pdc').html() !== convert_to_yuan(data.today_data.w_pdc)) {
-                    $('#w_pdc').html(convert_to_yuan(data.today_data.w_pdc));
-                    flash_element($('#w_pdc'));
                 }
                 if($('#m_pdc').html() !== convert_to_yuan(data.today_data.m_pdc)) {
                     $('#m_pdc').html(convert_to_yuan(data.today_data.m_pdc));
+                    if(data.today_data.m_pdc >= 1000){
+                        $('#m_pdc_unit').html('元')
+                    }else{
+                        $('#m_pdc_unit').html('个')
+                    }
                     flash_element($('#m_pdc'));
                 }
+                if($('#award_income').html() !== convert_to_yuan(data.today_data.award_income)) {
+                    $('#award_income').html(convert_to_yuan(data.today_data.award_income));
+                    if(data.today_data.award_income >= 1000){
+                        $('#award_income_unit').html('元')
+                    }else{
+                        $('#award_income_unit').html('个')
+                    }
+                    flash_element($('#award_income'));
+                }
+                if($('#w_award_income').html() !== convert_to_yuan(data.today_data.w_pdc)) {
+                    $('#w_award_income').html(convert_to_yuan(data.today_data.w_pdc));
+                    if(data.today_data.w_pdc >= 1000){
+                        $('#w_award_income_unit').html('元')
+                    }else{
+                        $('#w_award_income_unit').html('个')
+                    }
+                    flash_element($('#w_award_income'));
+                }
+
             })
         }
 

@@ -122,7 +122,9 @@ def save_history(username):
     today_data['income'] = 0
     today_data['speed_stat'] = list()
     today_data['pdc_detail'] = []
-    today_data['produce_stat'] = []
+    today_data['produce_stat'] = [] 
+    today_data['award_income'] = 0
+    today_data['w_award_income'] = 0
 
     for user_id in r_session.smembers('accounts:%s' % username):
         # 获取账号所有数据
@@ -145,6 +147,9 @@ def save_history(username):
         today_data['balance'] += data.get('income').get('r_can_use')
         today_data['income'] += data.get('income').get('r_h_a')
         today_data.get('produce_stat').append(dict(mid=data.get('privilege').get('mid'), hourly_list=data.get('produce_info').get('hourly_list')))
+        today_data['award_income'] += getaward_crystal_income(username, user_id.decode('utf-8'),0)
+        today_data['w_award_income'] += getaward_crystal_income(username, user_id.decode('utf-8'),1)
+        today_data['pdc'] += today_data['award_income'] 
         for device in data.get('device_info'):
             today_data['last_speed'] += int(int(device.get('dcdn_upload_speed')) / 1024)
             today_data['deploy_speed'] += int(device.get('dcdn_download_speed') / 1024)
@@ -274,7 +279,7 @@ def select_auto_task_user():
     r_session.sadd('global:auto.getaward.cookies', *auto_getaward_accounts)
 
 # 执行收取水晶函数
-def check_collect(user, cookies):
+def check_collect(user, cookies, user_info):
     print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'check_collect')
     mine_info = get_mine_info(cookies)
     time.sleep(2)
@@ -289,14 +294,17 @@ def check_collect(user, cookies):
     time.sleep(3)
 
 # 执行自动提现的函数
-def check_drawcash(user, cookies):
+def check_drawcash(user, cookies, user_info):
     print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'check_drawcash')
-    r = exec_draw_cash(cookies=cookies, limits=10)
+    limit=user_info.get('draw_money_modify')
+    if limit is None:
+        limit=10.0;
+    r = exec_draw_cash(cookies=cookies, limits=limit)
     red_log(user, '自动执行', '提现', r.get('rd'))
     time.sleep(3)
 
 # 执行免费宝箱函数
-def check_giftbox(user, cookies):
+def check_giftbox(user, cookies, user_info):
     print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'check_giftbox')
     box_info = api_giftbox(cookies)
     time.sleep(2)
@@ -319,7 +327,7 @@ def check_giftbox(user, cookies):
     time.sleep(3)
 
 # 执行秘银进攻函数
-def check_searcht(user, cookies):
+def check_searcht(user, cookies, user_info):
     print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'check_searcht')
     r = api_sys_getEntry(cookies)
     time.sleep(2)
@@ -341,7 +349,7 @@ def check_searcht(user, cookies):
     time.sleep(3)
 
 # 执行秘银复仇函数
-def check_revenge(user, cookies):
+def check_revenge(user, cookies, user_info):
     print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'check_revenge')
     r = api_steal_stolenSilverHistory(cookies)
     time.sleep(2)
@@ -362,9 +370,46 @@ def check_revenge(user, cookies):
                     api_steal_summary(cookies=cookies, searcht_id=steal_info.get('sid'))
             red_log(user, '自动执行', '复仇', log)
     time.sleep(3)
+# check award income
+def check_award_income(gets):
+    if -1 == gets.find('水晶'):
+        return 0
+    income=int(''.join(filter(lambda ch: ch in '0123456789', gets)))
+    return income
+
+# get award income from log
+def getaward_crystal_income(username, user_id, weekly):
+    print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'getaward_crystal_income')
+    award_income = 0
+    str_today = datetime.now().strftime('%Y-%m-%d')
+    key = '%s:%s' % ('record', username)
+    b_user_data = r_session.get(key)
+    if b_user_data is not None:
+        user_data = json.loads(b_user_data.decode('utf-8'))
+    else:
+        return today_award_income
+    if user_data.get('diary') is not None:
+        user_log = user_data.get('diary')
+    else:
+        return today_award_income
+    for item in user_log:
+        now = datetime.now()
+        log_time = datetime.strptime(item.get('time'), '%Y-%m-%d %H:%M:%S')
+        if weekly == 0:
+            if log_time.day == now.day and user_id == item.get('id') and item.get('gets').find('开启') != -1 and '宝箱' == item.get('type'):
+                award_income += check_award_income(item.get('gets'))
+            elif log_time.day == now.day and user_id == item.get('id') and item.get('gets').find('水晶') != -1 and '转盘' == item.get('type'):
+                award_income += check_award_income(item.get('gets'))
+        else:
+            if log_time.isocalendar()[0] == now.isocalendar()[0] and log_time.isocalendar()[1] == now.isocalendar()[1] and user_id == item.get('id') and item.get('gets').find('开启') != -1 and '宝箱' == item.get('type'):
+                award_income += check_award_income(item.get('gets'))
+            elif log_time.isocalendar()[0] == now.isocalendar()[0] and log_time.isocalendar()[1] == now.isocalendar()[1] and user_id == item.get('id') and item.get('gets').find('水晶') != -1 and '转盘' == item.get('type'):
+                award_income += check_award_income(item.get('gets'))
+    time.sleep(3)
+    return award_income
 
 # 执行幸运转盘函数
-def check_getaward(user, cookies):
+def check_getaward(user, cookies, user_info):
     print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'check_getaward')
     r = api_getconfig(cookies)
     time.sleep(2)
@@ -438,7 +483,8 @@ def cookies_auto(func, cookiename):
                 cookies = json.loads(user.decode('utf-8'))
                 session_id=cookies.get('sessionid')
                 user_id=cookies.get('userid')
-                func(cookies, dict(sessionid=session_id, userid=user_id))
+                user_info=cookies.get('user_info')
+                func(cookies, dict(sessionid=session_id, userid=user_id), user_info)
             except Exception as e:
                 continue
 
@@ -455,7 +501,10 @@ def red_log(cook, clas, type, gets):
     user = cook.get('user_info')
 
     record_key = '%s:%s' % ('record', user.get('username'))
-    record_info = json.loads(r_session.get(record_key).decode('utf-8'))
+    if r_session.get(record_key) is None:
+        record_info = dict(diary=[])
+    else:
+        record_info = json.loads(r_session.get(record_key).decode('utf-8'))
 
     id = cook.get('userid')
 
@@ -463,9 +512,13 @@ def red_log(cook, clas, type, gets):
     body = dict(time=log_as_time, clas=clas, type=type, id=id, gets=gets)
 
     log_as_body = record_info.get('diary')
-    log_as_body.append(body)
+    log_trimed = []
+    for item in log_as_body:
+       if (datetime.now() - datetime.strptime(item.get('time'), '%Y-%m-%d %H:%M:%S')).days < 31:
+           log_trimed.append(item)
+    log_trimed.append(body)
 
-    record_info['diary'] = log_as_body
+    record_info['diary'] = log_trimed
 
     r_session.set(record_key, json.dumps(record_info))
 

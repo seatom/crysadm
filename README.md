@@ -27,6 +27,9 @@ run.sh是运行脚本，down.sh是停止脚本，setup.sh是安装环境脚本�
 - 默认端口：4000
 - 第一次获得密码方法：浏览器打开【IP:4000/install】
 
+##  2016.04.14 更新 v4.1401
+更新转盘宝箱收益显示，运行日记分类功能完善功能
+
 ##  2016.04.14 更新 v4.1401 （本次改动文件:admin.py,user.py,base.html,guest.html,guest_invitation.html,login.html,public_invitation.html）
 新增站点监控分页
 新增邀请记录页面
