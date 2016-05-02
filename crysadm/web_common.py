@@ -88,8 +88,10 @@ def dashboard_data():
 
     if need_save:
         r_session.set(key, json.dumps(today_data))
-    if user_info.get('is_show_wpdc') != True:
-        today_data['w_pdc'] = today_data.get('w_award_income')
+    if user_info.get('is_show_wpdc') is None or user_info.get('is_show_wpdc') == 0:
+        today_data['w_award_income'] = today_data.get('award_income')
+    elif user_info.get('is_show_wpdc') == 2:
+        today_data['w_award_income'] = today_data.get('m_award_income')
     return Response(json.dumps(dict(today_data=today_data)), mimetype='application/json')
 
 # 刷新控制面板图表速度数据
@@ -217,9 +219,9 @@ def DoD_income_yuanjiangong():
 
     key = 'user_data:%s:%s' % (username, now.strftime('%Y-%m-%d'))
     b_today_user_data = r_session.get(key)
-    b_today_user_data = json.loads(b_today_user_data.decode('utf-8'))
     if b_today_user_data is None:
         return Response(json.dumps(dict(data=[])), mimetype='application/json')
+    b_today_user_data = json.loads(b_today_user_data.decode('utf-8'))
 
     key = 'user_data:%s:%s' % (username, (now + timedelta(days=-1)).strftime('%Y-%m-%d'))
     b_yesterday_user_data = r_session.get(key)
@@ -289,7 +291,7 @@ def DoD_income_yuanjiangong():
 
     user_key = '%s:%s' % ('user', user.get('username'))
     user_info = json.loads(r_session.get(user_key).decode('utf-8'))
-    if user_info['is_show_speed_data'] == False:
+    if user_info['is_show_speed_data'] is not None and user_info['is_show_speed_data'] == False:
         return Response(json.dumps(dict(series=[yesterday_series, today_series, yesterday_speed_series, today_speed_series],data=dict(last_day_income=yesterday_last_value, dod_income_value=dod_income_value,expected_income=expected_income))), mimetype='application/json')
     else:
         return Response(json.dumps(dict(series=[yesterday_series, today_series],data=dict(last_day_income=yesterday_last_value, dod_income_value=dod_income_value,expected_income=expected_income))), mimetype='application/json')
@@ -368,7 +370,7 @@ def DoD_income_xunlei():
 
     user_key = '%s:%s' % ('user', user.get('username'))
     user_info = json.loads(r_session.get(user_key).decode('utf-8'))
-    if user_info['is_show_speed_data'] == False:
+    if user_info['is_show_speed_data'] is not None and user_info['is_show_speed_data'] == False:
         return Response(json.dumps(dict(series=[yesterday_series, today_series, yesterday_speed_series, today_speed_series],data=dict(last_day_income=yesterday_last_value, dod_income_value=dod_income_value,expected_income=expected_income))), mimetype='application/json')
     else:
         return Response(json.dumps(dict(series=[yesterday_series, today_series],data=dict(last_day_income=yesterday_last_value, dod_income_value=dod_income_value,expected_income=expected_income))), mimetype='application/json')

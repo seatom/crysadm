@@ -282,9 +282,17 @@ def user_change_property(field, value):
     if field == 'is_show_speed_data':
         user_info['is_show_speed_data'] = True if value == '1' else False
     if field == 'is_show_wpdc':
-        user_info['is_show_wpdc'] = True if value == '1' else False
+        user_info['is_show_wpdc'] = int(value)
     if field == 'is_show_byname':
         user_info['is_show_byname'] = True if value == '1' else False
+    if field == 'mail_address':
+        user_info['mail_address'] = request.values.get('mail_address')
+    if field == 'collect_crystal_modify':
+        try:
+            if int(str(request.values.get('collect_crystal_modify'))) >= 3000:
+                user_info['collect_crystal_modify'] = int(str(request.values.get('collect_crystal_modify')))
+        except ValueError:
+            return redirect(url_for('user_profile'))
     if field == 'draw_money_modify':
         try:
             user_info['draw_money_modify'] = float(str(request.values.get('draw_money_modify')))

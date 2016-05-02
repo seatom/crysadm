@@ -154,9 +154,13 @@
                                                         <span class="label label-info">
                                                                 在线
                                                                 </span>
-                                                    {% else %}
+                                                    {% elif dev.status == 'offline' %}
                                                         <span class="label label-warning">
                                                                 断网
+                                                                </span>
+                                                    {% else %}
+                                                        <span class="label label-warning">
+                                                                异常
                                                                 </span>
                                                     {% endif %}
                                                     {% if dev.upgradeable %}

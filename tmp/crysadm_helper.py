@@ -15,8 +15,8 @@ app = Flask(__name__)
 app.config['MAIL_SERVER'] = 'smtp.163.com'
 app.config['MAIL_PORT'] = '25'
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = '你的邮件地址'
-app.config['MAIL_PASSWORD'] = '你的SMTP秘钥'
+app.config['MAIL_USERNAME'] = 'crysadm@163.com'
+app.config['MAIL_PASSWORD'] = 'JR2BK912uu5o2'
 mail = Mail(app)
 
 conf = None
@@ -114,26 +114,24 @@ def get_data(username):
 
             cookies['user_info']=user_info
             for dev in last_account_data['device_info']:
-                status_dict[dev['device_name']]=dev['status']
+                status_dict[dev['dcdn_id']]=dev['status']
                 for i,client in enumerate(dev['dcdn_clients']):
-                    space_dict['%s_%s' % (dev['device_name'],i)]=client['space_used']
+                    space_dict['%s_%s' % (dev['dcdn_id'],i)]=client['space_used']
             if account_data['device_info'] is not None:
                 for dev in account_data['device_info']:
-                    status_last=status_dict[dev['device_name']]
                     if dev['dcdn_clients'] is not None: 
                         if dev['status'] != 'online':
-                            if status_last is not None and dev['status'] is not None and status_last == 'online':
-                                red_log(cookies, '矿机异常', '状态', '%s:%s -> %s' % (dev['device_name'],status_last,dev['status'],))
+                            if status_dict[dev['dcdn_id']] is not None and dev['status'] is not None and  status_dict[dev['dcdn_id']] == 'online':
+                                red_log(cookies, '矿机异常', '状态', '%s:%s -> %s' % (dev['device_name'],status_dict[dev['dcdn_id']],dev['status'],))
                                 if validateEmail(user_info['mail_address']) == 1:
                                     msg = Message('矿机异常',sender=app.config['MAIL_USERNAME'],recipients=[user_info['mail_address']])
-                                    msg.body = '您的矿机:%s\n状态： %s -> %s\n时间:%s' % (dev['device_name'],status_dict[dev['device_name']],dev['status'],datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-                                    msg.html = '您的矿机:%s<br />状态： %s -> %s<br />时间:%s' % (dev['device_name'],status_dict[dev['device_name']],dev['status'],datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+                                    msg.body = '您的矿机:%s\n状态： %s -> %s\n时间:%s' % (dev['device_name'],status_dict[dev['dcdn_id']],dev['status'],datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+                                    msg.html = '您的矿机:%s<br />状态： %s -> %s<br />时间:%s' % (dev['device_name'],status_dict[dev['dcdn_id']],dev['status'],datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
                                     thread = Thread(target=send_async_email,args=[app,msg])
                                     thread.start()
                         for i,client in enumerate(dev['dcdn_clients']):
-                            space_last=space_dict['%s_%s' % (dev['device_name'],i)]
-                            if space_last is not None and client['space_used'] is not None and int(client['space_used'])<int(space_last):
-                                red_log(cookies, '缓存变动', '状态', '%s: %.2fGB -> %.2fGB' % (dev['device_name'],float(space_last)/1024/1024/1024),float(client['space_used'])/1024/1024/1024)
+                            if space_dict['%s_%s' % (dev['dcdn_id'],i)] is not None and client['space_used'] is not None and int(client['space_used'])<int(space_dict['%s_%s' % (dev['dcdn_id'],i)]):
+                                red_log(cookies, '缓存变动', '状态', '%s: %.2fGB -> %.2fGB' % (dev['device_name'],float(client['space_used'])/1024/1024/1024,float(space_dict['%s_%s' % (dev['dcdn_id'],i)])/1024/1024/1024))
         if start_time.day == datetime.now().day:
             save_history(username)
 
@@ -618,10 +616,3 @@ if __name__ == '__main__':
     # 每10分钟刷新一次离线用户数据
     threading.Thread(target=timer, args=(get_offline_user_data, 60*10)).start()
     # 从在线用户列表中清除离线用户，单位为秒，默认为60秒。
-    # 每分钟检测离线用户
-    threading.Thread(target=timer, args=(clear_offline_user, 60)).start()
-    # 刷新选择自动任务的用户，单位为秒，默认为10分钟
-    threading.Thread(target=timer, args=(select_auto_task_user, 60*10)).start()
-    while True:
-        time.sleep(1)
-

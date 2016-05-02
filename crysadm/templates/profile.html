@@ -51,17 +51,19 @@
                                 </div>
                             </form>
 
-                            <form role="form" action="/user/change_property/is_show_wpdc/{% if user_info.is_show_wpdc  %}0{% else %}1{% endif %}" method="post">
+                            <form role="form" action="/user/change_property/is_show_wpdc/{% if user_info.is_show_wpdc == 0 %}1{% elif user_info.is_show_wpdc == 1 %}2{% else %}0{% endif %}" method="post">
                                 <div class="form-group input-group">
                                      <span class="input-group-addon"><i style="width: 16px;" class="fa fa-trello"></i>
                                                 </span>
-                                    <input class="form-control" value="{% if user_info.is_show_wpdc %}X -（已显示本周收益）{% else %}O -（已显示本周宝箱转盘）{% endif %}" disabled>
+                                    <input class="form-control" value="{% if user_info.is_show_wpdc == 0 %}0 -（已显示今日宝箱转盘 ）{% elif user_info.is_show_wpdc == 1 %}1 -（已显示本周宝箱转盘 ）{% else %}2 -（已显示本月宝箱转盘）{% endif %}" disabled>
                                     
                                         <span class="input-group-btn" style="padding-top: 0px;padding-bottom: 0px;">
-                                        {% if user_info.is_show_wpdc  %}
+                                        {% if user_info.is_show_wpdc==0 %}
                                             <button type="submit" class="btn btn-danger" style="text-align:left; width: 140px;">显示本周宝箱</button>
+                                        {% elif user_info.is_show_wpdc==1 %}
+                                            <button type="submit" class="btn btn-warning" style="text-align:left; width: 140px;">显示本月宝箱</button>
                                         {% else %}
-                                            <button type="submit" class="btn btn-success" style="text-align:left; width: 140px;">显示本周收益</button>
+                                            <button type="submit" class="btn btn-success" style="text-align:left; width: 140px;">显示今日宝箱</button>
                                         {% endif %}
                                         </span>
                                     
@@ -90,7 +92,25 @@
                                     <span class="input-group-addon"><i style="width: 16px;" class="fa fa-dashcube"></i></span>
                                     <input class="form-control" name="draw_money_modify" value="{{user_info.draw_money_modify|safe}}" placeholder="提现金额修正值" type='text'>
                                     <span class="input-group-btn" style="padding-top: 0px;padding-bottom: 0px;">
-                                        <button type="submit" class="btn btn-info" style="text-align:left; width: 140px;">修正提现金额</button>
+                                        <button type="submit" class="btn btn-info" style="text-align:left; width: 140px;">修正提现金额下限</button>
+                                    </span>
+                                </div>
+                            </form>
+                            <form role="form" action="/user/change_property/collect_crystal_modify/1" method="post">
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon"><i style="width: 16px;" class="fa fa-dashcube"></i></span>
+                                    <input class="form-control" name="collect_crystal_modify" value="{{user_info.collect_crystal_modify|safe}}" placeholder="自动收取修正值" type='text'>
+                                    <span class="input-group-btn" style="padding-top: 0px;padding-bottom: 0px;">
+                                        <button type="submit" class="btn btn-info" style="text-align:left; width: 140px;">修正水晶收取下限</button>
+                                    </span>
+                                </div>
+                            </form>
+                            <form role="form" action="/user/change_property/mail_address/1" method="post">
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon"><i style="width: 16px;" class="fa fa-dashcube"></i></span>
+                                    <input class="form-control" name="mail_address" value="{{user_info.mail_address|safe}}" placeholder="设置提醒邮件发送地址" type='text'>
+                                    <span class="input-group-btn" style="padding-top: 0px;padding-bottom: 0px;">
+                                        <button type="submit" class="btn btn-info" style="text-align:left; width: 140px;">设置邮件地址</button>
                                     </span>
                                 </div>
                             </form>

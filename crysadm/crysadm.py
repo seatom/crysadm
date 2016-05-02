@@ -1,7 +1,6 @@
 from flask import Flask
 import config, socket, redis
 
-
 app = Flask(__name__)
 
 """

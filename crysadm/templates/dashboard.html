@@ -81,37 +81,15 @@
         <div class="col-lg-3 col-md-4 col-xs-6">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <span class="label label-info pull-right" style="padding-top: 5px;">今日</span>
-                    <h5>宝箱转盘</h5>
-                </div>
-                <div class="ibox-content" style="height: 88px;">
-
-                    <div class="row">
-                        <div class="col-xs-12 text-right" style="padding-left: 5px;">
-                            <h1 style="font-size: 33px; font-weight: bold;" class="no-margins" id="award_income"></h1>
-                            <small style=" font-weight: bold;"><span id="award_income_unit"></span></small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div >
-
-        <div class="col-lg-3 col-md-4 col-xs-6">
-            <div class="ibox float-e-margins">
-                <div class="ibox-title">
                     <span class="label label-primary pull-right" style="padding-top: 5px;">本周</span>
-                    {% if user_info.is_show_wpdc != True %}
-                        <h5>宝箱转盘</h5>
-                    {% else %}
-                        <h5>水晶产量</h5>
-                    {% endif %}
+                    <h5>水晶产量</h5>
                 </div>
                 <div class="ibox-content" style="height: 88px;">
 
                     <div class="row">
                         <div class="col-xs-12 text-right" style="padding-left: 5px;">
-                            <h1 style="font-size: 33px; font-weight: bold;" class="no-margins" id="w_award_income"></h1>
-                            <small style=" font-weight: bold;"><span id="w_award_income_unit"></span></small>
+                            <h1 style="font-size: 33px; font-weight: bold;" class="no-margins" id="w_pdc"></h1>
+                            <small style=" font-weight: bold;"><span id="w_pdc_unit"></span></small>
                         </div>
                     </div>
                 </div>
@@ -134,6 +112,30 @@
                 </div>
             </div>
         </div>
+
+        <div class="col-lg-3 col-md-4 col-xs-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    {% if user_info.is_show_wpdc == 0 %}
+                        <span class="label label-info pull-right" style="padding-top: 5px;">今日</span>
+                    {% elif user_info.is_show_wpdc == 1 %}
+                        <span class="label label-primary pull-right" style="padding-top: 5px;">本周</span>
+                    {% else %}
+                        <span class="label label-danger pull-right" style="padding-top: 5px;">本月</span>
+                    {% endif %}
+                    <h5>宝箱转盘</h5>
+                </div>
+                <div class="ibox-content" style="height: 88px;">
+
+                    <div class="row">
+                        <div class="col-xs-12 text-right" style="padding-left: 5px;">
+                            <h1 style="font-size: 33px; font-weight: bold;" class="no-margins" id="w_award_income"></h1>
+                            <small style=" font-weight: bold;"><span id="w_award_income_unit"></span></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div >
 
     </div>
     <div class="row">
@@ -630,18 +632,18 @@
                     }
                     flash_element($('#m_pdc'));
                 }
-                if($('#award_income').html() !== convert_to_yuan(data.today_data.award_income)) {
-                    $('#award_income').html(convert_to_yuan(data.today_data.award_income));
-                    if(data.today_data.award_income >= 1000){
-                        $('#award_income_unit').html('元')
-                    }else{
-                        $('#award_income_unit').html('个')
-                    }
-                    flash_element($('#award_income'));
-                }
-                if($('#w_award_income').html() !== convert_to_yuan(data.today_data.w_pdc)) {
-                    $('#w_award_income').html(convert_to_yuan(data.today_data.w_pdc));
+                if($('#w_pdc').html() !== convert_to_yuan(data.today_data.w_pdc)) {
+                    $('#w_pdc').html(convert_to_yuan(data.today_data.w_pdc));
                     if(data.today_data.w_pdc >= 1000){
+                        $('#w_pdc_unit').html('元')
+                    }else{
+                        $('#w_pdc_unit').html('个')
+                    }
+                    flash_element($('#w_pdc'));
+                }
+                if($('#w_award_income').html() !== convert_to_yuan(data.today_data.w_award_income)) {
+                    $('#w_award_income').html(convert_to_yuan(data.today_data.w_award_income));
+                    if(data.today_data.w_award_income >= 1000){
                         $('#w_award_income_unit').html('元')
                     }else{
                         $('#w_award_income_unit').html('个')
