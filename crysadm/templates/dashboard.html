@@ -116,13 +116,15 @@
         <div class="col-lg-3 col-md-4 col-xs-6">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
+                    <form role="form" action="/user/turnaward" method="post">
                     {% if user_info.is_show_wpdc == 0 %}
-                        <span class="label label-info pull-right" style="padding-top: 5px;">今日</span>
+                        <button class="label label-info pull-right" style="padding-top: 5px;border:none;">今日</button>
                     {% elif user_info.is_show_wpdc == 1 %}
-                        <span class="label label-primary pull-right" style="padding-top: 5px;">本周</span>
+                        <button class="label label-primary pull-right" style="padding-top: 5px;border:none;">本周</button>
                     {% else %}
-                        <span class="label label-danger pull-right" style="padding-top: 5px;">本月</span>
+                        <button class="label label-danger pull-right" style="padding-top: 5px;border:none;">本月</button>
                     {% endif %}
+                    </form>
                     <h5>宝箱转盘</h5>
                 </div>
                 <div class="ibox-content" style="height: 88px;">
@@ -147,6 +149,12 @@
                     {% else %}
                         <h5>同比产量 (迅雷统计)</h5>
                     {% endif %}
+                    <form style="float:left;margin-left: 5px;margin-top: -3px;" role="form" action="/user/turnincome" method="post">
+                        <button type="submit" class="btn btn-outline btn-default btn-xs">切换</button>
+                    </form>
+                    <form style="float:left;margin-left: 5px;margin-top: -3px;" role="form" action="/user/turnspeed" method="post">
+                        <button type="submit" class="btn btn-outline btn-default btn-xs">{% if user_info.is_show_speed_data != True %}关闭{% else %}打开{% endif %}速度条</button>
+                    </form>
                 </div>
                 <div class="ibox-content">
                     <div class="row">

@@ -39,7 +39,10 @@
             {% endif %}
             <form class="m-t" role="form" action="/user/register" method="post">
                 <div class="form-group">
-                    <input class="form-control" placeholder="邀请码" name="invitation_code" type="text" value="{{ invitation_code }}" autofocus>
+                    <input class="form-control" placeholder="邮箱" name="email" type="text">
+                </div>
+                <div class="form-group">
+                    <input class="form-control" placeholder="邀请码" name="invitation_code" type="text" value="{{ invitation_code }}">
                 </div>
                 <div class="form-group">
                     <input class="form-control" placeholder="用户名" name="username" type="email" {% if invitation_code %} autofocus {% endif %}>
