@@ -18,6 +18,10 @@ def md5(s):
 
     return hashlib.md5(s.encode('utf-8')).hexdigest().lower()
 
+def sha1(s):
+    import hashlib
+
+    return hashlib.sha1(s.encode('utf-8')).hexdigest().lower()
 
 def get_message():
     err_msg = None

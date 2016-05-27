@@ -151,7 +151,19 @@ def admin_change_property(field, value, username):
         user_info['auto_revenge'] = True if value == '1' else False
     elif field == 'auto_getaward':
         user_info['auto_getaward'] = True if value == '1' else False
-
+    elif field.endswith('_interval'):
+        try:
+            if int(str(request.values.get(field))) >= 1:
+                user_info[field] = int(str(request.values.get(field)))
+                r_session.set(user_key, json.dumps(user_info))
+        except ValueError:
+            print(ValueError)
+        return redirect(url_for('system_config'))
+    elif field.find('_mail_') != -1:
+        session['action'] = 'info'
+        user_info[field] = str(request.values.get(field))
+        r_session.set(user_key, json.dumps(user_info))
+        return redirect(url_for('system_config'))
     r_session.set(user_key, json.dumps(user_info))
 
     return redirect(url_for(endpoint='admin_user_management', username=username))
@@ -227,8 +239,19 @@ def none_user():
 
     return json.dumps(dict(none_xlAcct=none_xlAcct, none_active_xlAcct=none_active_xlAcct))
 
+# 系统管理 -> 用户管理 -> 删除无矿机的用户
+@app.route('/admin/clear_no_device_user', methods=['POST'])
+@requires_admin
+def admin_clear_no_device_user():
+    for b_user in r_session.smembers('users'):
+        username = b_user.decode('utf-8')
+        accounts_count = r_session.smembers('accounts:%s' % username)
+        if accounts_count is None or len(accounts_count) == 0:
+             admin_del_user(username)
+        return redirect(url_for('admin_user'))
+
 # 系统管理 => 用户管理 => 删除无用户？
-@app.route('/del_none_user')
+@app.route('/del_none_user', methods=['POST'])
 @requires_admin
 def del_none_user():
     none_active_xlAcct = list()
@@ -246,8 +269,8 @@ def del_none_user():
                 break
         if not has_active_account:
             none_active_xlAcct.append(username)
-
-    return json.dumps(dict(none_active_xlAcct=none_active_xlAcct))
+            admin_del_user(username)
+    return redirect(url_for('admin_user'))
 
 # 系统管理 => 通知管理 => 发送通知
 @app.route('/admin/message/send', methods=['POST'])
@@ -279,6 +302,47 @@ def admin_message_send():
         send_msg(to, subject, send_content, 3600 * 24)
 
     return redirect(url_for(endpoint='admin_message'))
+
+@app.route('/admin/test_email', methods=['POST'])
+@requires_admin
+def test_email():
+    from mailsand import send_email
+    from mailsand import validateEmail
+    config_key = '%s:%s' % ('user', 'system')
+    config_info = json.loads(r_session.get(config_key).decode('utf-8'))
+
+    user = session.get('user_info')
+    user_key = '%s:%s' % ('user', user.get('username'))
+    user_info = json.loads(r_session.get(user_key).decode('utf-8'))
+
+    session['action'] = 'info'
+    if 'email' not in user_info.keys() or not validateEmail(user_info["email"]):
+       session['error_message']='该账户的提醒邮件地址设置不正确，无法测试'
+       return redirect(url_for('system_config'))
+    mail = dict()
+    mail['to'] = user_info['email']
+    mail['subject'] = '云监工-测试邮件'
+    mail['text'] = '这只是一个测试邮件，你更应该关注的不是这里面写了什么。不是么？'
+    send_email(mail,config_info)
+    return redirect(url_for('system_config'))
+
+
+@app.route('/admin/settings')
+@requires_admin
+def system_config():
+    config_key = '%s:%s' % ('user', 'system')
+    config_info = json.loads(r_session.get(config_key).decode('utf-8'))
+
+    err_msg = None
+    if session.get('error_message') is not None:
+        err_msg = session.get('error_message')
+        session['error_message'] = None
+    action = None
+    if session.get('action') is not None:
+        action = session.get('action')
+        session['action'] = None
+
+    return render_template('admin_settings.html', user_info=config_info, err_msg=err_msg, action=action)
 
 # 站长交流
 @app.route('/talk')
@@ -356,5 +420,5 @@ def guest_invitation_delete():
 @requires_admin
 def admin_about():
     import platform
-    version = '当前版本：2016-05-01'
+    version = '当前版本：2016-05-27'
     return render_template('about.html', platform=platform, version=version)

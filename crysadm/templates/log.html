@@ -15,18 +15,21 @@
                         <form role="form" style="margin-left: 3px;float:right;" action="/log/delete">
                             <button type="submit" style="margin: 0px;" onclick="javascript:return confirm('确认要清空所有记录?')" class="btn btn-info btn-xs">清空日记</button>
                         </form>
+                        <form role="form" style="margin-left: 3px;float:right;" action="/log/delete_sel">
+                            <button type="submit" style="margin: 0px;" onclick="javascript:return confirm('确认要清空当前筛选到的记录?')" class="btn btn-info btn-xs">删除筛选日记</button>
+                        </form>
                     {% endif %}
                 </div>
                 <div class="ibox-title" style="height:45px;">
                     <font style="margin-left:3px;float:left;">分类：</font>
-                    <a href="/log/1" class="btn btn-warning btn-xs" style="margin-left:1px;float:left;"><font color="#FFFFFF">收取</font></a>
-                    <a href="/log/2" class="btn btn-warning btn-xs" style="margin-left:1px;float:left;"><font color="#FFFFFF">宝箱</font></a>
-                    <a href="/log/3" class="btn btn-warning btn-xs" style="margin-left:1px;float:left;"><font color="#FFFFFF">转盘</font></a>
-                    <a href="/log/4" class="btn btn-warning btn-xs" style="margin-left:1px;float:left;"><font color="#FFFFFF">进攻</font></a>
-                    <a href="/log/5" class="btn btn-warning btn-xs" style="margin-left:1px;float:left;"><font color="#FFFFFF">复仇</font></a>
-                    <a href="/log/6" class="btn btn-warning btn-xs" style="margin-left:1px;float:left;"><font color="#FFFFFF">提现</font></a>
-                    <a href="/log/7" class="btn btn-warning btn-xs" style="margin-left:1px;float:left;"><font color="#FFFFFF">状态</font></a>
-                    <a href="/log/0" class="btn btn-info btn-xs" style="margin-left:3px;float:left;"><font color="#FFFFFF">全部</font></a>
+                    <a href="?type=1" class="btn btn-warning btn-xs" style="margin-left:1px;float:left;"><font color="#FFFFFF">收取</font></a>
+                    <a href="?type=2" class="btn btn-warning btn-xs" style="margin-left:1px;float:left;"><font color="#FFFFFF">宝箱</font></a>
+                    <a href="?type=3" class="btn btn-warning btn-xs" style="margin-left:1px;float:left;"><font color="#FFFFFF">转盘</font></a>
+                    <a href="?type=4" class="btn btn-warning btn-xs" style="margin-left:1px;float:left;"><font color="#FFFFFF">进攻</font></a>
+                    <a href="?type=5" class="btn btn-warning btn-xs" style="margin-left:1px;float:left;"><font color="#FFFFFF">复仇</font></a>
+                    <a href="?type=6" class="btn btn-warning btn-xs" style="margin-left:1px;float:left;"><font color="#FFFFFF">提现</font></a>
+                    <a href="?type=7" class="btn btn-warning btn-xs" style="margin-left:1px;float:left;"><font color="#FFFFFF">状态</font></a>
+                    <a href="?type=0" class="btn btn-info btn-xs" style="margin-left:3px;float:left;"><font color="#FFFFFF">全部</font></a>
                 </div>
                 <div class="ibox-content">
                     <div class="table-responsive">

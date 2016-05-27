@@ -70,6 +70,12 @@ def get_balance_info(cookies):
     body = dict(v='2', appversion=appversion)
     return api_post(url='/?r=usr/asset', data=body, cookies=cookies)
 
+# 检测账户收支记录
+def get_balance_log(cookies):
+    cookies['origin'] = '4' if len(cookies.get('sessionid')) == 128 else '1'
+    body = dict(v='2', appversion=appversion)
+    return api_post(url='/?r=usr/assetio', data=body, cookies=cookies)
+
 # 提交提现请求
 def draw_cash(cookies, money):
     cookies['origin'] = '4' if len(cookies.get('sessionid')) == 128 else '1'

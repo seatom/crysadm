@@ -56,6 +56,15 @@
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     系统用户列表
+                    <form role="form" style="float:right;margin-right: 5px;margin-top: -3px;" action="/del_none_user" method="post">
+                        <button type="submit" onclick="javascript:return confirm('清除所有无矿机及未启用矿机的账户?')" class="btn btn-info btn-xs">一键删除无矿机及未启用矿机的账户</button>
+                    </form>
+                    <form role="form" style="float:right;margin-right: 5px;margin-top: -3px;" action="/admin/clear_no_device_user" method="post">
+                        <button type="submit" onclick="javascript:return confirm('清除所有无迅雷账号的注册用户?')" class="btn btn-info btn-xs">清除无矿机的用户</button>
+                    </form>
+                    <form role="form" style="float:right;margin-right: 5px;margin-top: -3px;" action="/none_user" method="get">
+                        <button type="submit" class="btn btn-info btn-xs">查询无矿机及未启用矿机的账户</button>
+                    </form>
                 </div>
                 <!-- /.panel-heading -->
                 <div class="ibox-content">

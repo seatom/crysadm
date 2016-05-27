@@ -4,6 +4,7 @@
 <head>
 
     <meta charset="utf-8">
+    <meta name="baidu-site-verification" content="uBjDa38B2020F" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Crysadm+ | Login</title>
@@ -22,6 +23,9 @@
             }
 
         }
+	   .col-md-12>span>a{
+		color: #676a6c;
+	   }
     </style>
 </head>
 
@@ -44,8 +48,6 @@
                 <p>
                     我是迅雷矿场云端监控大师.
                 </p>
-
-                <p>
                     <small></small>
                 </p>
 
@@ -91,8 +93,33 @@
                <small>© 2016-</small>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <span style="margin-right:10px;">本站用户数：{{ accounts_count.users }}</span>
+                <span style="margin-right:10px;">迅雷账号数：{{ accounts_count.accounts }}</span>
+                <span>矿机数：{{ accounts_count.accountsk }}</span>
+            </div>
+        </div>
+	   <div class="row">
+            <div class="col-md-12 text-center">
+                <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1259201154'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1259201154%26online%3D1%26show%3Dline' type='text/javascript'%3E%3C/script%3E"));</script>
+		  </div>
+	   </div>
     </div>
-
+	<script>
+	(function(){
+	    var bp = document.createElement('script');
+	    var curProtocol = window.location.protocol.split(':')[0];
+	    if (curProtocol === 'https') {
+		   bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+	    }
+	    else {
+		   bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+	    }
+	    var s = document.getElementsByTagName("script")[0];
+	    s.parentNode.insertBefore(bp, s);
+	})();
+	</script>
 </body>
 
 </html>

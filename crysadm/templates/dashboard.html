@@ -62,7 +62,7 @@
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <span class="label label-info pull-right" style="padding-top: 5px;">今日</span>
-                    <h5>水晶产量</h5>
+                    <h5>矿场产量</h5>
                 </div>
                 <div class="ibox-content" style="height: 88px;">
                     <div class="row">
@@ -82,7 +82,7 @@
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <span class="label label-primary pull-right" style="padding-top: 5px;">本周</span>
-                    <h5>水晶产量</h5>
+                    <h5>水晶收益</h5>
                 </div>
                 <div class="ibox-content" style="height: 88px;">
 
@@ -100,7 +100,7 @@
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <span class="label label-danger pull-right" style="padding-top: 5px;">本月</span>
-                    <h5>水晶产量</h5>
+                    <h5>水晶收益</h5>
                 </div>
                 <div class="ibox-content" style="height: 88px;">
                     <div class="row">
@@ -116,13 +116,15 @@
         <div class="col-lg-3 col-md-4 col-xs-6">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
+                    <form role="form" action="/user/turnaward" method="post">
                     {% if user_info.is_show_wpdc == 0 %}
-                        <span class="label label-info pull-right" style="padding-top: 5px;">今日</span>
+                        <button class="label label-info pull-right" style="padding-top: 5px;border:none;">今日</button>
                     {% elif user_info.is_show_wpdc == 1 %}
-                        <span class="label label-primary pull-right" style="padding-top: 5px;">本周</span>
+                        <button class="label label-primary pull-right" style="padding-top: 5px;border:none;">本周</button>
                     {% else %}
-                        <span class="label label-danger pull-right" style="padding-top: 5px;">本月</span>
+                        <button class="label label-danger pull-right" style="padding-top: 5px;border:none;">本月</button>
                     {% endif %}
+                    </form>
                     <h5>宝箱转盘</h5>
                 </div>
                 <div class="ibox-content" style="height: 88px;">
@@ -146,6 +148,14 @@
                         <h5>同比产量 (默认统计)</h5>
                     {% else %}
                         <h5>同比产量 (迅雷统计)</h5>
+                    {% endif %}
+                    <form style="float:left;margin-left: 5px;margin-top: -3px;" role="form" action="/user/turnincome" method="post">
+                        <button type="submit" class="btn btn-outline btn-default btn-xs">切换</button>
+                    </form>
+                    {% if user_info.auto_column == True %}
+                        <form style="float:left;margin-left: 5px;margin-top: -3px;" role="form" action="/user/turnspeed" method="post">
+                            <button type="submit" class="btn btn-outline btn-default btn-xs">{% if user_info.is_show_speed_data != True %}关闭{% else %}打开{% endif %}速度条</button>
+                        </form>
                     {% endif %}
                 </div>
                 <div class="ibox-content">
@@ -485,7 +495,7 @@
                         x: -20 //center
                     },
                     xAxis: {
-                        categories: ["01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00", "24:00"]
+                        categories: ["00-01", "01-02", "02-03", "03-04", "04-05", "05-06", "06-07", "07-08", "08-09", "09-10", "10-11", "11-12", "12-13", "13-14", "14-15", "15-16", "16-17", "17-18", "18-19", "19-20", "20-21", "21-22", "22-23", "23-24"]
                     },
                     yAxis: {
                         min: 0,
