@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title" style="height:42px;">
+                    系统信息
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+
+                            <tr>
+                                <th class="col-md-1">操作系统</th>
+                                <th class="col-md-1">系统版本</th>
+                                <th class="col-md-1">系统架构</th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr>
+                                    <td class="hidden-xs">{{ platform.system()|e }}</td>
+                                    <td class="hidden-xs">{{ platform.version()|e }}</td>
+                                    <td class="hidden-xs">{{ platform.architecture()[0]|e }}</td>
+
+
+
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="ibox-title" style="height:42px;">
+                    Python
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+
+                            <tr>
+                                <th class="col-md-1">python</th>
+                                <th class="col-md-1">版本</th>
+                                <th class="col-md-1">SCM</th>
+                                <th class="col-md-1">MSC</th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr>
+                                    <td class="hidden-xs">{{ platform.python_implementation()|e }}</td>
+                                    <td class="hidden-xs">{{ platform.python_version()|e }}</td>
+                                    <td class="hidden-xs">{{ platform.python_revision()|e }}</td>
+                                    <td class="hidden-xs">{{ platform.python_compiler()|e }}</td>
+
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+                <div class="ibox-title" style="height:42px;">
+                    版本信息
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <td>{{ version|e }}</td>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block navibar %}
+    <div class="col-lg-10">
+        <h2>关于</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a href="/">Home</a>
+            </li>
+            <li class="active">
+                <strong>About</strong>
+            </li>
+        </ol>
+    </div>
+{% endblock %}
+{% set active_page = "about" %}

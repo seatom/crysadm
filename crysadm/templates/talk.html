@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title" style="height:42px;">
+                    留言板
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <!-- UY BEGIN -->
+                        <div id="uyan_frame"></div>
+                        <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2095021"></script>
+                        <!-- UY END -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block navibar %}
+    <div class="col-lg-10">
+        <h2>留言板</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a href="/">Home</a>
+            </li>
+            <li class="active">
+                <strong>Talk</strong>
+            </li>
+        </ol>
+    </div>
+{% endblock %}
+{% set active_page = "talk" %}

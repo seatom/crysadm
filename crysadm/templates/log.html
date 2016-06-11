@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title" style="height:42px;">
+                    <div class="ibox-tools" style="height:45px;float:left;">
+                        <font style="margin-left:3px;float:left;">筛选：</font>
+                        <a href="?time=1day" class="btn btn-success btn-xs" style="margin-left:1px;float:left;"><font color="#FFFFFF">1天</font></a>
+                        <a href="?time=7day" class="btn btn-success btn-xs" style="margin-left:1px;float:left;"><font color="#FFFFFF">7天</font></a>
+                        <a href="?time=all" class="btn btn-info btn-xs" style="margin-left:3px;float:left;"><font color="#FFFFFF">全部</font></a>
+                    </div>
+                    {% if log_user|length >0 %}
+                        <form role="form" style="margin-left: 3px;float:right;" action="/log/delete">
+                            <button type="submit" style="margin: 0px;" onclick="javascript:return confirm('确认要清空所有记录?')" class="btn btn-info btn-xs">清空日记</button>
+                        </form>
+                        <form role="form" style="margin-left: 3px;float:right;" action="/log/delete_sel">
+                            <button type="submit" style="margin: 0px;" onclick="javascript:return confirm('确认要清空当前筛选到的记录?')" class="btn btn-info btn-xs">删除筛选日记</button>
+                        </form>
+                    {% endif %}
+                </div>
+                <div class="ibox-title" style="height:45px;">
+                    <font style="margin-left:3px;float:left;">分类：</font>
+                    <a href="?type=1" class="btn btn-warning btn-xs" style="margin-left:1px;float:left;"><font color="#FFFFFF">收取</font></a>
+                    <a href="?type=2" class="btn btn-warning btn-xs" style="margin-left:1px;float:left;"><font color="#FFFFFF">宝箱</font></a>
+                    <a href="?type=3" class="btn btn-warning btn-xs" style="margin-left:1px;float:left;"><font color="#FFFFFF">转盘</font></a>
+                    <a href="?type=4" class="btn btn-warning btn-xs" style="margin-left:1px;float:left;"><font color="#FFFFFF">进攻</font></a>
+                    <a href="?type=5" class="btn btn-warning btn-xs" style="margin-left:1px;float:left;"><font color="#FFFFFF">复仇</font></a>
+                    <a href="?type=6" class="btn btn-warning btn-xs" style="margin-left:1px;float:left;"><font color="#FFFFFF">提现</font></a>
+                    <a href="?type=7" class="btn btn-warning btn-xs" style="margin-left:1px;float:left;"><font color="#FFFFFF">状态</font></a>
+                    <a href="?type=0" class="btn btn-info btn-xs" style="margin-left:3px;float:left;"><font color="#FFFFFF">全部</font></a>
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th class="col-md-1">时间</th>
+                                <th class="col-md-1 hidden-xs">类型</th>
+                                <th class="col-md-1">分类</th>
+                                <th class="col-md-1">账户</th>
+                                <th class="col-md-1">详细信息</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for row in log_user %}
+                                <tr>
+                                    <td class="hidden-xs">{{ row.time|e }}</td>
+                                    <td class="visible-xs">{{ row.time.split(' ')[1] }}</td>
+                                    <td class="hidden-xs">{{ row.clas|e }}</td>
+                                    <td>{{ row.type|e }}</td>
+                                    <td>{{ row.id|e }}</td>
+                                    <td>{{ row.gets|e }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block navibar %}
+    <div class="col-lg-10">
+        <h2>运行日记</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a href="/">Home</a>
+            </li>
+            <li class="active">
+                <strong>Log</strong>
+            </li>
+        </ol>
+    </div>
+{% endblock %}
+{% set active_page = "log" %}

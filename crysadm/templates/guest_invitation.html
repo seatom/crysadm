@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title" style="height:42px;">
+                    邀请记录
+                    {% if public_as|length >0 %}
+                        <form role="form" style="margin-left: 3px;float:right;" action="/guest/invitation/delete">
+                            <button type="submit" style="margin: 0px;" onclick="javascript:return confirm('确认要清空所有记录?')" class="btn btn-info btn-xs">清空记录</button>
+                        </form>
+                    {% endif %}
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th class="col-md-1">时间</th>
+                                <th class="col-md-1">访问IP</th>
+                                <th class="col-md-1">邀请码</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for row in public_as %}
+                                <tr>
+                                    <td class="hidden-xs">{{ row.time|e }}</td>
+                                    <td class="visible-xs">{{ row.time.split(' ')[1] }}</td>
+                                    <td>{{ row.ip|e }}</td>
+                                    <td>{{ row.inv_code|e }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block navibar %}
+    <div class="col-lg-10">
+        <h2>邀请记录</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a href="/">Home</a>
+            </li>
+            <li>
+                Guest
+            </li>
+            <li class="active">
+                <strong>Invitation</strong>
+            </li>
+        </ol>
+    </div>
+{% endblock %}
+{% set active_page = "invitation" %}
